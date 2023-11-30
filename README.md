@@ -17,7 +17,16 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 
 ### Commands
 
-- `:TimerStart TIMELIMIT [NAME]` to start a new timer. For example, `:TimerStart 25m Work` to start a timer for 25 minutes called "Work". Currently the time limit can only be specified in hours, minutes, or seconds, such as `10m` for "10 minutes" or `10s` for "10 seconds".
+- `:TimerStart TIMELIMIT [NAME]` to start a new timer.
+
+  The time limit can be specified in hours, minutes, seconds, or a combination of those, and *shouldn't include any spaces*. For example:
+
+  - `:TimerStart 25m Work` to start a timer for 25 minutes called "Work".
+  - `:TimerStart 10s` to start a timer for 10 seconds.
+  - `:TimerStart 1h30m` to start a timer for an hour and a half.
+
+  pomo.nvim will recognize multiple forms of the time units, such as "m", "min", "minute", or "minutes" for minutes.
+
 - `:TimerStop [TIMERID]` to stop a running timer, e.g. `:TimerStop 1`. If no ID is given, the latest timer is stopped.
 
 ## Setup

@@ -7,7 +7,7 @@ local M = {}
 M.register_commands = function()
   vim.api.nvim_create_user_command("TimerStart", function(data)
     if data.fargs == nil or #data.fargs == 0 or #data.fargs > 2 then
-      return log.error "Invalid arguments.\nUsage: TimerStart TIMELIMIT [NAME]"
+      return log.error "Invalid number arguments, expected 2.\nUsage: TimerStart TIMELIMIT [NAME]"
     end
 
     local time_arg = string.lower(data.fargs[1])
