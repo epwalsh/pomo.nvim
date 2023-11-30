@@ -28,6 +28,8 @@ To setup pomo.nvim you just need to call `require("pomo").setup({ ... })` with t
 return {
   "epwalsh/pomo.nvim",
   version = "*",  -- Recommended, use latest release instead of latest commit
+  lazy = true,
+  cmd = { "TimerStart", "TimerStop" },
   dependencies = {
     -- Optional, but highly recommended
     "rcarriga/nvim-notify",
