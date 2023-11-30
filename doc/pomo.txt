@@ -38,6 +38,8 @@ USING LAZY.NVIM                                         *pomo-using-lazy.nvim*
     return {
       "epwalsh/pomo.nvim",
       version = "*",  -- Recommended, use latest release instead of latest commit
+      lazy = true,
+      cmd = { "TimerStart", "TimerStop" },
       dependencies = {
         -- Optional, but highly recommended
         "rcarriga/nvim-notify",
