@@ -40,9 +40,7 @@ end
 
 ---The default implementation of `pomo.Notifier`, uses `vim.notify` to display the timer.
 ---@class pomo.DefaultNotifier : pomo.Notifier
----@field timer_id integer
----@field time_limit integer
----@field name string|?
+---@field timer pomo.Timer
 ---@field notification any
 ---@field opts table
 ---@field title_icon string
@@ -50,16 +48,12 @@ end
 local DefaultNotifier = {}
 M.DefaultNotifier = DefaultNotifier
 
----@param timer_id integer
----@param time_limit integer
----@param name string|?
+---@param timer pomo.Timer
 ---@param opts table|?
 ---@return pomo.DefaultNotifier
-DefaultNotifier.new = function(timer_id, time_limit, name, opts)
+DefaultNotifier.new = function(timer, opts)
   local self = setmetatable({}, { __index = DefaultNotifier })
-  self.timer_id = timer_id
-  self.time_limit = time_limit
-  self.name = name
+  self.timer = timer
   self.notification = nil
   self.opts = opts and opts or {}
   self.title_icon = self.opts.title_icon and self.opts.title_icon or "󱎫"
@@ -71,13 +65,25 @@ end
 ---@param level string|integer
 ---@param timeout boolean|integer
 DefaultNotifier._update = function(self, text, level, timeout)
+  local repetitions_str = ""
+  if self.timer.max_repetitions ~= nil and self.timer.max_repetitions > 0 then
+    repetitions_str = string.format(" [%d/%d]", self.timer.repetitions + 1, self.timer.max_repetitions)
+  end
+
   ---@type string
   local title
-  if self.name ~= nil then
-    title = string.format("Timer #%d, %s, %s", self.timer_id, self.name, util.format_time(self.time_limit))
+  if self.timer.name ~= nil then
+    title = string.format(
+      "Timer #%d, %s, %s%s",
+      self.timer.id,
+      self.timer.name,
+      util.format_time(self.timer.time_limit),
+      repetitions_str
+    )
   else
-    title = string.format("Timer #%d, %s", self.timer_id, util.format_time(self.time_limit))
+    title = string.format("Timer #%d, %s%s", self.timer.id, util.format_time(self.timer.time_limit), repetitions_str)
   end
+
   self.notification = vim.notify(text, level, {
     icon = self.title_icon,
     title = title,
@@ -106,9 +112,7 @@ end
 
 ---A `pomo.Notifier` that sends a system notification when the timer is finished.
 ---@class pomo.SystemNotifier : pomo.Notifier
----@field timer_id integer
----@field time_limit integer
----@field name string|?
+---@field timer pomo.Timer
 ---@field notification any
 ---@field opts table
 local SystemNotifier = {}
@@ -116,20 +120,16 @@ M.SystemNotifier = SystemNotifier
 
 SystemNotifier.supported_oss = { util.OS.Darwin }
 
----@param timer_id integer
----@param time_limit integer
----@param name string|?
+---@param timer pomo.Timer
 ---@param opts table|?
 ---@return pomo.SystemNotifier
-SystemNotifier.new = function(timer_id, time_limit, name, opts)
+SystemNotifier.new = function(timer, opts)
   if not vim.tbl_contains(SystemNotifier.supported_oss, util.get_os()) then
     error(string.format("SystemNotifier is not implemented for your OS (%s)", util.get_os()))
   end
 
   local self = setmetatable({}, { __index = SystemNotifier })
-  self.timer_id = timer_id
-  self.time_limit = time_limit
-  self.name = name
+  self.timer = timer
   self.notification = nil
   self.opts = opts and opts or {}
   return self
@@ -143,12 +143,18 @@ SystemNotifier.start = function(self) ---@diagnostic disable-line: unused-local
 end
 
 SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
+  local repetitions_str = ""
+  if self.timer.max_repetitions ~= nil and self.timer.max_repetitions > 0 then
+    repetitions_str = string.format(" [%d/%d]", self.timer.repetitions + 1, self.timer.max_repetitions)
+  end
+
   if util.get_os() == util.OS.Darwin then
     os.execute(
       string.format(
-        [[osascript -e 'display notification "Timer done!" with title "Timer #%d, %s" sound name "Ping"']],
-        self.timer_id,
-        util.format_time(self.time_limit)
+        [[osascript -e 'display notification "Timer done!" with title "Timer #%d, %s%s" sound name "Ping"']],
+        self.timer.id,
+        util.format_time(self.timer.time_limit),
+        repetitions_str
       )
     )
   else
@@ -160,25 +166,23 @@ SystemNotifier.stop = function(self) ---@diagnostic disable-line: unused-local
 end
 
 ---Construct a `pomo.Notifier` given a notifier name (`pomo.NotifierType`) or factory function.
+---@param timer pomo.Timer
 ---@param opts pomo.NotifierConfig
----@param timer_id integer
----@param time_limit integer
----@param name string|?
 ---@return pomo.Notifier
-M.build = function(opts, timer_id, time_limit, name)
+M.build = function(timer, opts)
   if (opts.name == nil) == (opts.init == nil) then
     error "invalid notifier config, 'name' and 'init' are mutually exclusive"
   end
 
   if opts.init ~= nil then
     assert(opts.init)
-    return opts.init(timer_id, time_limit, name, opts)
+    return opts.init(timer, opts)
   else
     assert(opts.name)
     if opts.name == NotifierType.Default then
-      return DefaultNotifier.new(timer_id, time_limit, name, opts.opts)
+      return DefaultNotifier.new(timer, opts.opts)
     elseif opts.name == NotifierType.System then
-      return SystemNotifier.new(timer_id, time_limit, name, opts.opts)
+      return SystemNotifier.new(timer, opts.opts)
     else
       error(string.format("invalid notifier name '%s'", opts.name))
     end

@@ -9,6 +9,8 @@ local util = require "pomo.util"
 ---@field start_time integer|?
 ---@field notifiers pomo.Notifier[]
 ---@field config pomo.Config
+---@field max_repetitions integer|?
+---@field repetitions integer
 local Timer = {}
 
 ---Initialize a `pomo.Timer`.
@@ -16,8 +18,9 @@ local Timer = {}
 ---@param time_limit integer
 ---@param name string|?
 ---@param config pomo.Config
+---@param repeat_n integer|? The number of times to repeat the timer
 ---@return pomo.Timer
-Timer.new = function(id, time_limit, name, config)
+Timer.new = function(id, time_limit, name, config, repeat_n)
   local self = setmetatable({}, {
     __index = Timer,
     ---@param self pomo.Timer
@@ -32,23 +35,33 @@ Timer.new = function(id, time_limit, name, config)
         time_str = util.format_time(self.time_limit)
       end
 
+      local repetitions_str = ""
+      if self.max_repetitions ~= nil and self.max_repetitions > 0 then
+        repetitions_str = string.format(" [%d/%d]", self.repetitions + 1, self.max_repetitions)
+      end
+
       if self.name ~= nil then
-        return string.format("#%d, %s: %s", self.id, self.name, time_str)
+        return string.format("#%d, %s: %s%s", self.id, self.name, time_str, repetitions_str)
       else
-        return string.format("#%d: %s", self.id, time_str)
+        return string.format("#%d: %s%s", self.id, time_str, repetitions_str)
       end
     end,
   })
+
   self.id = id
   self.time_limit = time_limit
   self.name = name
   self.config = config
+  self.max_repetitions = repeat_n
+  self.repetitions = 0
   self.timer = vim.loop.new_timer() ---@diagnostic disable-line: undefined-field
+
   self.notifiers = {}
   for _, noti_opts in ipairs(self.config.notifiers) do
-    local noti = notifier.build(noti_opts, self.id, self.time_limit, self.name)
+    local noti = notifier.build(self, noti_opts)
     self.notifiers[#self.notifiers + 1] = noti
   end
+
   return self
 end
 
@@ -68,7 +81,7 @@ end
 ---@return pomo.Timer
 Timer.start = function(self, timer_done)
   self.start_time = vim.loop.hrtime() ---@diagnostic disable-line: undefined-field
-
+  self.repetitions = 0
   for _, noti in ipairs(self.notifiers) do
     noti:start()
   end
@@ -84,14 +97,21 @@ Timer.start = function(self, timer_done)
           noti:tick(time_left)
         end
       else
-        self.timer:close()
-
         for _, noti in ipairs(self.notifiers) do
           noti:done()
         end
 
-        if timer_done ~= nil then
-          timer_done(self)
+        if self.max_repetitions ~= nil and self.max_repetitions > 0 and self.repetitions + 1 < self.max_repetitions then
+          self.repetitions = self.repetitions + 1
+          self.start_time = vim.loop.hrtime() ---@diagnostic disable-line: undefined-field
+          for _, noti in ipairs(self.notifiers) do
+            noti:start()
+          end
+        else
+          self.timer:close()
+          if timer_done ~= nil then
+            timer_done(self)
+          end
         end
       end
     end)

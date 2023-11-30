@@ -12,7 +12,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
-- ⏱️ Run multiple concurrent timers
+- ⏱️ Run multiple concurrent timers and repeat timers
 - ➕ Integrate with [lualine](#lualinenvim)
 
 ### Commands
@@ -29,6 +29,8 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 
 - `:TimerStop [TIMERID]` to stop a running timer, e.g. `:TimerStop 1`. If no ID is given, the latest timer is stopped.
 
+- `:TimerRepeat TIMELIMIT REPETITIONS [NAME]` to start a repeat timer, e.g. `:TimerRepeat 10s 2` to repeat a 10 second timer twice.
+
 ## Setup
 
 To setup pomo.nvim you just need to call `require("pomo").setup({ ... })` with the desired options. Here are some examples using different plugin managers. The full set of [configuration options](#configuration-options) are listed below.
@@ -40,7 +42,7 @@ return {
   "epwalsh/pomo.nvim",
   version = "*",  -- Recommended, use latest release instead of latest commit
   lazy = true,
-  cmd = { "TimerStart", "TimerStop" },
+  cmd = { "TimerStart", "TimerStop", "TimerRepeat" },
   dependencies = {
     -- Optional, but highly recommended if you want to use the "Default" timer
     "rcarriga/nvim-notify",
@@ -96,7 +98,7 @@ This is a complete list of all of the options that can be passed to `require("po
 
     -- You can also define custom notifiers by providing an "init" function instead of a name.
     -- See "Defining custom notifiers" below for an example 👇
-    -- { init = function(timer_id, time_limit, name) ... end }
+    -- { init = function(timer) ... end }
   },
 }
 ```
@@ -110,32 +112,30 @@ To define your own notifier you need to create a Lua `Notifier` class along with
 - `Notifier.done(self)` - Called when the timer finishes.
 - `Notifier.stop(self)` - Called when the timer is stopped before finishing.
 
-The factory `init` function takes 3 or 4 arguments, the `timer_id` (an integer), the `time_limit` seconds (an integer), the `name` assigned to the timer (a string or `nil`), and optionally a table of options from the `opts` field in the notifier's config.
+The factory `init` function takes 1 or 2 arguments, the `timer` (a `pomo.Timer`) and optionally a table of options from the `opts` field in the notifier's config.
 
 For example, here's a simple notifier that just uses `print`:
 
 ```lua
 local PrintNotifier = {}
 
-PrintNotifier.new = function(timer_id, time_limit, name, opts)
+PrintNotifier.new = function(timer, opts)
   local self = setmetatable({}, { __index = PrintNotifier })
-  self.timer_id = timer_id
-  self.time_limit = time_limit
-  self.name = name and name or "Countdown"
+  self.timer = timer
   self.opts = opts -- not used
   return self
 end
 
 PrintNotifier.start = function(self)
-  print(string.format("Starting timer #%d, %s, for %ds", self.timer_id, self.name, self.time_limit))
+  print(string.format("Starting timer #%d, %s, for %ds", self.timer.id, self.timer.name, self.timer.time_limit))
 end
 
 PrintNotifier.tick = function(self, time_left)
-  print(string.format("Timer #%d, %s, %ds remaining...", self.timer_id, self.name, time_left))
+  print(string.format("Timer #%d, %s, %ds remaining...", self.timer.id, self.timer.name, time_left))
 end
 
 PrintNotifier.done = function(self)
-  print(string.format("Timer #%d, %s, complete", self.timer_id, self.name))
+  print(string.format("Timer #%d, %s, complete", self.timer.id, self.timer.name))
 end
 
 PrintNotifier.stop = function(self) end

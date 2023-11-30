@@ -7,18 +7,15 @@ local M = {}
 M.register_commands = function()
   vim.api.nvim_create_user_command("TimerStart", function(data)
     if data.fargs == nil or #data.fargs == 0 or #data.fargs > 2 then
-      return log.error "Invalid number arguments, expected 2.\nUsage: TimerStart TIMELIMIT [NAME]"
+      return log.error "invalid number arguments, expected 1 or 2.\nUsage: TimerStart TIMELIMIT [NAME]"
     end
 
-    local time_arg = string.lower(data.fargs[1])
-    local name = data.fargs[2]
-
-    ---@type number|?
-    local time_limit = util.parse_time(time_arg)
-
+    local time_limit = util.parse_time(data.fargs[1])
     if time_limit == nil then
-      return log.error("invalid time limit '%s'", time_arg)
+      return log.error("invalid time limit '%s'", data.fargs[1])
     end
+
+    local name = data.fargs[2]
 
     pomo.start_timer(time_limit, name)
   end, { nargs = "+" })
@@ -42,6 +39,26 @@ M.register_commands = function()
       return log.error "failed to stop timer"
     end
   end, { nargs = "?" })
+
+  vim.api.nvim_create_user_command("TimerRepeat", function(data)
+    if data.fargs == nil or #data.fargs < 2 or #data.fargs > 3 then
+      return log.error "invalid number arguments, expected 2 or 3.\nUsage: TimerRepeat TIMELIMIT REPETITIONS [NAME]"
+    end
+
+    local time_limit = util.parse_time(data.fargs[1])
+    if time_limit == nil then
+      return log.error("invalid time limit '%s'", data.fargs[1])
+    end
+
+    local repititions = tonumber(data.fargs[2])
+    if repititions == nil then
+      return log.error("invalid number of repetitions, expected number, got '%s'", data.fargs[2])
+    end
+
+    local name = data.fargs[3]
+
+    pomo.start_timer(time_limit, name, repititions)
+  end, { nargs = "+" })
 end
 
 return M

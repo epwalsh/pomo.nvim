@@ -14,12 +14,13 @@ M.setup = function(opts)
 end
 
 ---Start a new timer.
----@param time_limit integer seconds
+---@param time_limit integer The time limit, in seconds.
 ---@param name string|?
+---@param repeat_n integer|? The number of the times to repeat the timer.
 ---@return integer time_id
-M.start_timer = function(time_limit, name)
+M.start_timer = function(time_limit, name, repeat_n)
   local timer_id = timers:first_available_id()
-  local timer = Timer.new(timer_id, time_limit, name, M.get_config())
+  local timer = Timer.new(timer_id, time_limit, name, M.get_config(), repeat_n)
 
   timers:store(timer)
 
