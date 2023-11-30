@@ -12,6 +12,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
+- ⏱️ Supports multiple concurrent timers
 
 ### Commands
 
