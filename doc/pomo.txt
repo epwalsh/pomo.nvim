@@ -8,7 +8,21 @@ Lua.
 
 
 ==============================================================================
-1. Setup                                                          *pomo-setup*
+1. Features                                                    *pomo-features*
+
+- 🪶 Lightweight and asynchronous
+- 💻 Written in Lua
+- ⚙️ Easily customizable and extendable
+
+
+COMMANDS                                                       *pomo-commands*
+
+- `:TimerStart TIMELIMIT [NAME]` to start a new timer. For example, `:TimerStart 25m Work` to start a timer for 25 minutes called "Work".
+- `:TimerStop TIMERID` to stop a running timer by its ID, e.g. `:TimerStop 1`.
+
+
+==============================================================================
+2. Setup                                                          *pomo-setup*
 
 To setup pomo.nvim you just need to call `require("pomo").setup({ ... })` with
 the desired options. Here are some examples using different plugin managers.
@@ -52,7 +66,7 @@ USING PACKER.NVIM                                     *pomo-using-packer.nvim*
 
 
 ==============================================================================
-2. Configuration options                          *pomo-configuration-options*
+3. Configuration options                          *pomo-configuration-options*
 
 This is a complete list of all of the options that can be passed to
 `require("pomo").setup()`. The values represent reasonable defaults, but please
@@ -88,7 +102,7 @@ read each option carefully and customize it to your needs:
 
 
 ==============================================================================
-3. Defining custom notifiers                  *pomo-defining-custom-notifiers*
+4. Defining custom notifiers                  *pomo-defining-custom-notifiers*
 
 To define your own notifier you need to create a Lua `Notifier` class along
 with a factory `init` function to construct your notifier. Your `Notifier`
@@ -142,7 +156,7 @@ following entry:
 
 
 ==============================================================================
-4. Contributing                                            *pomo-contributing*
+5. Contributing                                            *pomo-contributing*
 
 Please see the CONTRIBUTING
 <https://github.com/epwalsh/obsidian.nvim/blob/main/.github/CONTRIBUTING.md>
@@ -156,7 +170,7 @@ funds! ❤️
 <https://www.buymeacoffee.com/epwalsh>
 
 ==============================================================================
-5. Links                                                          *pomo-links*
+6. Links                                                          *pomo-links*
 
 1. *BuyMeACoffee*: https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 
