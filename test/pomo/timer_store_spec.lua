@@ -22,6 +22,7 @@ describe("TimerStore", function()
 
     assert.equals(2, timers:len())
     assert.equals(3, timers:first_available_id())
+    assert.equals(2, #timers:get_all())
 
     -- Get the latest.
     assert.equals(2, timers:get_latest().id)

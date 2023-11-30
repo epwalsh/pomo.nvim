@@ -70,8 +70,8 @@ Timer.new = function(id, time_limit, name, config, repeat_n)
   return self
 end
 
----Get the time remaining on the timer.
----@return number|?
+---Get the time remaining (in seconds) on the timer.
+---@return number|? seconds
 Timer.time_remaining = function(self)
   if self.start_time == nil then
     return nil
@@ -133,7 +133,7 @@ Timer.stop = function(self)
   end
 end
 
----This is a class definition for the timer in `vim.loop`.
+---This is a class definition for the timer in `vim.loop` to help my language server.
 ---@class uv_timer_t
 ---@field start function
 ---@field close function

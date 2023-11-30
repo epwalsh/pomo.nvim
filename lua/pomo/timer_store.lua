@@ -80,6 +80,7 @@ TimerStore.get_latest = function(self)
   return latest_timer
 end
 
+---Get the first timer to finish next (minimum time remaining) out of all active timers.
 ---@return pomo.Timer|?
 TimerStore.get_first_to_finish = function(self)
   ---@type pomo.Timer|?
@@ -98,6 +99,12 @@ TimerStore.get_first_to_finish = function(self)
   end
 
   return min_timer
+end
+
+---Get a list of all active timers.
+---@return pomo.Timer[]
+TimerStore.get_all = function(self)
+  return vim.tbl_values(self.timers)
 end
 
 ---Pop a timer from the store. If no ID is given, the latest timer is popped.
