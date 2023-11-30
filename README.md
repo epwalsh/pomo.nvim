@@ -12,7 +12,8 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
-- ⏱️ Supports multiple concurrent timers
+- ⏱️ Run multiple concurrent timers
+- ➕ Integrate with [lualine](#lualinenvim)
 
 ### Commands
 
@@ -135,6 +136,37 @@ And then in the `notifiers` field of your pomo.nvim config, you'd add the follow
 
 ```lua
   { init = PrintNotifier.new, opts = {} }
+```
+
+## Integrations
+
+### [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)
+
+pomo.nvim can easily be added to a section in lualine. For example, this would extend the defaults for section X to include the next timer to finish (min time remaining):
+
+```lua
+require("lualine").setup {
+  sections = {
+    lualine_x = {
+      function()
+        local ok, pomo = pcall(require, "pomo")
+        if not ok then
+          return ""
+        end
+
+        local timer = pomo.get_first_to_finish()
+        if timer == nil then
+          return ""
+        end
+
+        return "󰄉 " .. tostring(timer)
+      end,
+      "encoding",
+      "fileformat",
+      "filetype",
+    },
+  },
+}
 ```
 
 ## Contributing

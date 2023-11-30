@@ -1,4 +1,5 @@
 local notifier = require "pomo.notifier"
+local util = require "pomo.util"
 
 ---@class pomo.Timer
 ---@field id integer
@@ -17,7 +18,27 @@ local Timer = {}
 ---@param config pomo.Config
 ---@return pomo.Timer
 Timer.new = function(id, time_limit, name, config)
-  local self = setmetatable({}, { __index = Timer })
+  local self = setmetatable({}, {
+    __index = Timer,
+    ---@param self pomo.Timer
+    ---@return string
+    __tostring = function(self)
+      ---@type string
+      local time_str
+      local time_left = self:time_remaining()
+      if time_left ~= nil then
+        time_str = util.format_time(time_left)
+      else
+        time_str = util.format_time(self.time_limit)
+      end
+
+      if self.name ~= nil then
+        return string.format("#%d, %s: %s", self.id, self.name, time_str)
+      else
+        return string.format("#%d: %s", self.id, time_str)
+      end
+    end,
+  })
   self.id = id
   self.time_limit = time_limit
   self.name = name
