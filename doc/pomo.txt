@@ -16,7 +16,8 @@ Lua.
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
-- ⏱️ Supports multiple concurrent timers
+- ⏱️ Run multiple concurrent timers
+- ➕ Integrate with |pomo-lualine|
 
 
 COMMANDS                                                       *pomo-commands*
@@ -162,7 +163,43 @@ following entry:
 
 
 ==============================================================================
-5. Contributing                                            *pomo-contributing*
+5. Integrations                                            *pomo-integrations*
+
+
+LUALINE.NVIM                                               *pomo-lualine.nvim*
+
+pomo.nvim can easily be added to a section in lualine. For example, this would
+extend the defaults for section X to include the next timer to finish (min time
+remaining):
+
+>lua
+    require("lualine").setup {
+      sections = {
+        lualine_x = {
+          function()
+            local ok, pomo = pcall(require, "pomo")
+            if not ok then
+              return ""
+            end
+    
+            local timer = pomo.get_first_to_finish()
+            if timer == nil then
+              return ""
+            end
+    
+            return "󰄉 " .. tostring(timer)
+          end,
+          "encoding",
+          "fileformat",
+          "filetype",
+        },
+      },
+    }
+<
+
+
+==============================================================================
+6. Contributing                                            *pomo-contributing*
 
 Please see the CONTRIBUTING
 <https://github.com/epwalsh/obsidian.nvim/blob/main/.github/CONTRIBUTING.md>
@@ -176,7 +213,7 @@ funds! ❤️
 <https://www.buymeacoffee.com/epwalsh>
 
 ==============================================================================
-6. Links                                                          *pomo-links*
+7. Links                                                          *pomo-links*
 
 1. *demo-gif*: https://github.com/epwalsh/pomo.nvim/assets/8812459/e987203c-6e00-4e04-9012-2a1202953dab
 2. *BuyMeACoffee*: https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
