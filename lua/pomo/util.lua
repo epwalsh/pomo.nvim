@@ -23,6 +23,7 @@ M.get_os = function()
   return this_os
 end
 
+---Format a time in seconds into a human-readable string.
 ---@param time_left number seconds
 ---@return string
 M.format_time = function(time_left)
@@ -42,6 +43,47 @@ M.format_time = function(time_left)
     else
       return os.date("%Hh %Mm", time_left) ---@diagnostic disable-line: return-type-mismatch
     end
+  end
+end
+
+---Parse a time string into seconds.
+---@param s string
+---@return number|?
+M.parse_time = function(s)
+  ---@type number
+  local time = 0
+
+  -- Hours.
+  for _, pattern in ipairs { "([%d%.]+)%s*hours", "([%d%.]+)%s*hour", "([%d%.]+)%s*hr", "([%d%.]+)%s*h" } do
+    local _, _, hours_str = string.find(s, pattern)
+    if hours_str ~= nil then
+      time = time + tonumber(hours_str) * 60 * 60
+      break
+    end
+  end
+
+  -- Minutes.
+  for _, pattern in ipairs { "([%d%.]+)%s*minutes", "([%d%.]+)%s*minute", "([%d%.]+)%s*min", "([%d%.]+)%s*m" } do
+    local _, _, minutes_str = string.find(s, pattern)
+    if minutes_str ~= nil then
+      time = time + tonumber(minutes_str) * 60
+      break
+    end
+  end
+
+  -- Seconds.
+  for _, pattern in ipairs { "([%d%.]+)%s*seconds", "([%d%.]+)%s*second", "([%d%.]+)%s*sec", "([%d%.]+)%s*s" } do
+    local _, _, seconds_str = string.find(s, pattern)
+    if seconds_str ~= nil then
+      time = time + tonumber(seconds_str)
+      break
+    end
+  end
+
+  if time <= 0 then
+    return tonumber(s) -- default to seconds
+  else
+    return time
   end
 end
 

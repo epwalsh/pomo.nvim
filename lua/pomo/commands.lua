@@ -1,5 +1,6 @@
 local pomo = require "pomo"
 local log = require "pomo.log"
+local util = require "pomo.util"
 
 local M = {}
 
@@ -13,16 +14,7 @@ M.register_commands = function()
     local name = data.fargs[2]
 
     ---@type number|?
-    local time_limit
-    if vim.endswith(time_arg, "m") then
-      time_limit = tonumber(string.sub(time_arg, 1, -2)) * 60
-    elseif vim.endswith(time_arg, "h") then
-      time_limit = tonumber(string.sub(time_arg, 1, -2)) * 3600
-    elseif vim.endswith(time_arg, "s") then
-      time_limit = tonumber(string.sub(time_arg, 1, -2))
-    else
-      time_limit = tonumber(time_arg)
-    end
+    local time_limit = util.parse_time(time_arg)
 
     if time_limit == nil then
       return log.error("invalid time limit '%s'", time_arg)

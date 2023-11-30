@@ -66,4 +66,16 @@ M.num_active_timers = function()
   return timers:len()
 end
 
+---Get the latest timer (last one added/started) out of all active timers.
+---@return pomo.Timer|?
+M.get_latest = function()
+  return timers:get_latest()
+end
+
+---Get the first timer to finish (minimum time remaining) out of all active timers.
+---@return pomo.Timer|?
+M.get_first_to_finish = function()
+  return timers:get_first_to_finish()
+end
+
 return M

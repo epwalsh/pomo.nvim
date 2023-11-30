@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - Added `Timer` and `TimerStore` abstractions.
+- Added `pomo.get_latest()` and `pomo.get_first_to_finish()` functions.
 
 ### Changed
 
