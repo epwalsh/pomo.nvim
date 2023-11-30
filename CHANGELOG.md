@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+
+- Added `Timer` and `TimerStore` abstractions.
+
 ### Changed
 
 - The argument to `:StopTimer` is now optional when there is only one active timer.
