@@ -24,8 +24,8 @@ jobs:
       - name: panvimdoc
         uses: kdheepak/panvimdoc@v4.0.0
         with:
-          vimdoc: obsidian
-          description: a plugin for writing and navigating an Obsidian vault
+          vimdoc: pomo
+          description: a simple, customizable pomodoro timer for Neovim, written in Lua
           pandoc: README.md
           toc: false
           version: NVIM v0.9.4
