@@ -17,7 +17,7 @@ Lua.
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
 - ⏱️ Run multiple concurrent timers and repeat timers
-- ➕ Integrate with |pomo-lualine|
+- ➕ Integrate with nvim-notify <https://github.com/rcarriga/nvim-notify>, |pomo-lualine|, and more
 
 
 COMMANDS                                                       *pomo-commands*
@@ -183,11 +183,17 @@ following entry:
 5. Integrations                                            *pomo-integrations*
 
 
+NVIM-NOTIFY                                                 *pomo-nvim-notify*
+
+The "Default" notifier integrates seamlessly with `nvim-notify`, you just need
+to have `nvim-notify` installed.
+
+
 LUALINE.NVIM                                               *pomo-lualine.nvim*
 
-pomo.nvim can easily be added to a section in lualine. For example, this would
-extend the defaults for section X to include the next timer to finish (min time
-remaining):
+pomo.nvim can easily be added to a section in your `lualine`. For example, this
+would extend the defaults for section X to include the next timer to finish
+(min time remaining):
 
 >lua
     require("lualine").setup {
