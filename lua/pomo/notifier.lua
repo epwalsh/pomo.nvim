@@ -47,7 +47,7 @@ end
 ---@field opts table
 ---@field title_icon string
 ---@field text_icon string
-DefaultNotifier = {}
+local DefaultNotifier = {}
 M.DefaultNotifier = DefaultNotifier
 
 ---@param timer_id integer
@@ -111,7 +111,7 @@ end
 ---@field name string|?
 ---@field notification any
 ---@field opts table
-SystemNotifier = {}
+local SystemNotifier = {}
 M.SystemNotifier = SystemNotifier
 
 SystemNotifier.supported_oss = { util.OS.Darwin }
