@@ -5,6 +5,17 @@
 
 A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Technique) timer for Neovim, written in Lua.
 
+## Features
+
+- 🪶 Lightweight and asynchronous
+- 💻 Written in Lua
+- ⚙️ Easily customizable and extendable
+
+### Commands
+
+- `:TimerStart TIMELIMIT [NAME]` to start a new timer. For example, `:TimerStart 25m Work` to start a timer for 25 minutes called "Work".
+- `:TimerStop TIMERID` to stop a running timer by its ID, e.g. `:TimerStop 1`.
+
 ## Setup
 
 To setup pomo.nvim you just need to call `require("pomo").setup({ ... })` with the desired options. Here are some examples using different plugin managers. The full set of [configuration options](#configuration-options) are listed below.
