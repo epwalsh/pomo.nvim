@@ -16,6 +16,7 @@ Lua.
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
+- ⏱️ Supports multiple concurrent timers
 
 
 COMMANDS                                                       *pomo-commands*
