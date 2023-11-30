@@ -1,0 +1,138 @@
+name: Main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+
+env:
+  runtime: ~/.local/share/nvim/site/pack/vendor/start
+  plenary-git: https://github.com/nvim-lua/plenary.nvim
+  plenary-path: ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
+
+jobs:
+  style:
+    name: Style
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Style
+        uses: JohnnyMorganz/stylua-action@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: 0.15.1
+          args: --check .
+
+  checks:
+    name: ${{ matrix.task.name }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        task:
+          - name: Test
+            run: |
+              make test
+
+          - name: Lint
+            prepare: |
+              sudo luarocks install luacheck
+            run: |
+              make lint
+
+        include:
+          - os: ubuntu-latest
+            nvim_url: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+            packages: luarocks ripgrep
+            manager: sudo apt-get
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - run: date +%F > todays-date
+
+      - name: Restore cache for today's nightly
+        uses: actions/cache@v3
+        with:
+          path: |
+            _neovim
+          key: ${{ runner.os }}-${{ hashFiles('todays-date') }}
+
+      - name: Install packages
+        if: ${{ matrix.packages }}
+        run: ${{ matrix.manager }} install ${{ matrix.packages }}
+
+      - name: Install neovim
+        run: |
+          mkdir -p ${{ env.runtime }}
+          test -d _neovim || {
+            mkdir -p _neovim
+            curl -sL ${{ matrix.nvim_url }} | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
+          }
+          git clone --depth 1 ${{ env.plenary-git }} ${{ env.plenary-path }}
+          ln -s $(pwd) ${{ env.runtime }}
+
+      - name: Prepare
+        if: ${{ matrix.task.prepare }}
+        run: ${{ matrix.task.prepare }}
+
+      - name: ${{ matrix.task.name }}
+        run: |
+          export PATH="${PWD}/_neovim/bin:${PATH}"
+          export VIM="${PWD}/_neovim/share/nvim/runtime"
+          nvim --version
+          ${{ matrix.task.run }}
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: [checks, style]
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install requirements
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install -r dev-requirements.txt
+
+      - name: Prepare environment
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+          echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Generate release notes
+        run: |
+          python scripts/release_notes.py > ${{ github.workspace }}-RELEASE_NOTES.md
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          body_path: ${{ github.workspace }}-RELEASE_NOTES.md
+          prerelease: ${{ contains(env.TAG, 'rc') }}
