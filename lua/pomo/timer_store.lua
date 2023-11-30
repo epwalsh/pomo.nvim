@@ -28,6 +28,12 @@ TimerStore.len = function(self)
   return vim.tbl_count(self.timers)
 end
 
+---Check if the timer store is empty.
+---@return boolean
+TimerStore.is_empty = function(self)
+  return self:len() == 0
+end
+
 ---Store a new timer.
 ---@param timer pomo.Timer
 TimerStore.store = function(self, timer)
@@ -56,7 +62,45 @@ TimerStore.get = function(self, timer_id)
   return self.timers[timer_id]
 end
 
----Pop a timer from the store.
+---Get the latest timer (last one started).
+---@return pomo.Timer|?
+TimerStore.get_latest = function(self)
+  ---@type pomo.Timer|?
+  local latest_timer
+  ---@type integer|?
+  local latest_start_time
+
+  for _, t in pairs(self.timers) do
+    if latest_timer == nil or latest_start_time == nil or t.start_time == nil or t.start_time > latest_start_time then
+      latest_timer = t
+      latest_start_time = t.start_time
+    end
+  end
+
+  return latest_timer
+end
+
+---@return pomo.Timer|?
+TimerStore.get_first_to_finish = function(self)
+  ---@type pomo.Timer|?
+  local min_timer
+  ---@type number|?
+  local min_time_left
+
+  for _, t in pairs(self.timers) do
+    local time_left = t:time_remaining()
+    if time_left ~= nil then
+      if min_time_left == nil or time_left < min_time_left then
+        min_timer = t
+        min_time_left = time_left
+      end
+    end
+  end
+
+  return min_timer
+end
+
+---Pop a timer from the store. If no ID is given, the latest timer is popped.
 ---@param timer_id integer|?
 ---@return pomo.Timer|?
 TimerStore.pop = function(self, timer_id)
@@ -66,8 +110,12 @@ TimerStore.pop = function(self, timer_id)
       -- not necessarily its length, which is why this works.
       return self:pop(#self.timers)
     else
-      -- TODO: stop oldest timer?
-      return nil
+      local latest_timer = self:get_latest()
+      if latest_timer ~= nil then
+        return self:pop(latest_timer.id)
+      else
+        return nil
+      end
     end
   else
     local timer = self:get(timer_id)

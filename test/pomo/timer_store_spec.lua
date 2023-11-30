@@ -10,16 +10,24 @@ describe("TimerStore", function()
     assert.equals(1, timers:first_available_id())
 
     -- Add a timer.
-    timers:store(Timer.new(1, 10, "Test 1", config))
+    timers:store(Timer.new(1, 8, "Test 1", config):start())
 
     assert.equals(1, timers:len())
     assert.equals(2, timers:first_available_id())
 
+    vim.wait(50)
+
     -- Add another.
-    timers:store(Timer.new(2, 10, "Test 2", config))
+    timers:store(Timer.new(2, 10, "Test 2", config):start())
 
     assert.equals(2, timers:len())
     assert.equals(3, timers:first_available_id())
+
+    -- Get the latest.
+    assert.equals(2, timers:get_latest().id)
+
+    -- Get the first to finish.
+    assert.equals(1, timers:get_first_to_finish().id)
 
     -- Remove the first timer.
     assert.equals(1, timers:pop(1).id)

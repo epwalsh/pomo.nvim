@@ -20,6 +20,7 @@ end
 M.start_timer = function(time_limit, name)
   local timer_id = timers:first_available_id()
   local timer = Timer.new(timer_id, time_limit, name, M.get_config())
+
   timers:store(timer)
 
   timer:start(function(t)
@@ -29,7 +30,7 @@ M.start_timer = function(time_limit, name)
   return timer_id
 end
 
----Stop a timer.
+---Stop a timer. If no ID is given, the latest timer is stopped.
 ---@param timer_id integer|?
 ---@return boolean
 M.stop_timer = function(timer_id)

@@ -16,7 +16,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 ### Commands
 
 - `:TimerStart TIMELIMIT [NAME]` to start a new timer. For example, `:TimerStart 25m Work` to start a timer for 25 minutes called "Work".
-- `:TimerStop [TIMERID]` to stop a running timer, e.g. `:TimerStop 1`.
+- `:TimerStop [TIMERID]` to stop a running timer, e.g. `:TimerStop 1`. If no ID is given, the latest timer is stopped.
 
 ## Setup
 

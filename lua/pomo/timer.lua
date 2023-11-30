@@ -5,6 +5,7 @@ local notifier = require "pomo.notifier"
 ---@field time_limit integer seconds
 ---@field name string|?
 ---@field timer uv_timer_t
+---@field start_time integer|?
 ---@field notifiers pomo.Notifier[]
 ---@field config pomo.Config
 local Timer = {}
@@ -30,10 +31,22 @@ Timer.new = function(id, time_limit, name, config)
   return self
 end
 
+---Get the time remaining on the timer.
+---@return number|?
+Timer.time_remaining = function(self)
+  if self.start_time == nil then
+    return nil
+  end
+
+  local time_elapsed = (vim.loop.hrtime() - self.start_time) / 1000000000 ---@diagnostic disable-line: undefined-field
+  return self.time_limit - time_elapsed
+end
+
 ---Start the timer.
 ---@param timer_done function|? callback(timer)
+---@return pomo.Timer
 Timer.start = function(self, timer_done)
-  local start_time = vim.loop.hrtime() ---@diagnostic disable-line: undefined-field
+  self.start_time = vim.loop.hrtime() ---@diagnostic disable-line: undefined-field
 
   for _, noti in ipairs(self.notifiers) do
     noti:start()
@@ -43,8 +56,7 @@ Timer.start = function(self, timer_done)
     1000,
     self.config.update_interval,
     vim.schedule_wrap(function()
-      local time_elapsed = (vim.loop.hrtime() - start_time) / 1000000000 ---@diagnostic disable-line: undefined-field
-      local time_left = self.time_limit - time_elapsed
+      local time_left = assert(self:time_remaining())
 
       if time_left > 0 then
         for _, noti in ipairs(self.notifiers) do
@@ -63,6 +75,8 @@ Timer.start = function(self, timer_done)
       end
     end)
   )
+
+  return self
 end
 
 ---Stop the timer.

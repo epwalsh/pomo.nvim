@@ -32,24 +32,22 @@ M.register_commands = function()
   end, { nargs = "+" })
 
   vim.api.nvim_create_user_command("TimerStop", function(data)
+    ---@type integer|?
     local timer_id
     if string.len(data.args) > 0 then
       timer_id = tonumber(data.args)
 
-      if timer_id == nil or not pomo.get_timer(timer_id) then
-        return log.error("invalid timer ID '%s'", data.args)
+      if timer_id == nil then
+        return log.error("invalid timer ID: '%s'", data.args)
+      elseif not pomo.get_timer(timer_id) then
+        return log.error("timer #%d is not active", timer_id)
       end
+    elseif pomo.num_active_timers() == 0 then
+      return log.error "there are no active timers"
+    end
 
-      pomo.stop_timer(timer_id)
-    else
-      local n = pomo.num_active_timers()
-      if n == 1 then
-        pomo.stop_timer()
-      elseif n > 1 then
-        return log.error "there are multiple active timers, please provide a timer ID"
-      else
-        return log.error "there are no active timers"
-      end
+    if not pomo.stop_timer(timer_id) then
+      return log.error "failed to stop timer"
     end
   end, { nargs = "?" })
 end
