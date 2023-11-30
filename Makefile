@@ -23,4 +23,4 @@ style :
 
 .PHONY : version
 version :
-	@nvim --headless -c 'lua print("v" .. require("pomo").VERSION)' -c q 2>&1
+	@nvim --headless -c 'lua print("v" .. require("pomo.version"))' -c q 2>&1
