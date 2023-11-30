@@ -4,6 +4,7 @@ local M = {}
 ---@class pomo.Config
 ---@field update_interval integer
 ---@field notifiers pomo.NotifierConfig[]
+---@field timers table<string, pomo.NotifierConfig[]>
 
 ---@class pomo.NotifierConfig
 ---@field name pomo.NotifierType|?
@@ -17,6 +18,7 @@ M.default = function()
     notifiers = {
       { name = NotifierType.Default },
     },
+    timers = {},
   }
 end
 

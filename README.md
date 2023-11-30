@@ -77,7 +77,9 @@ This is a complete list of all of the options that can be passed to `require("po
 
 ```lua
 {
+  -- How often the notifiers are updated.
   update_interval = 1000,
+
   -- Configure the notifiers to use for each timer that's created.
   notifiers = {
     -- The "Default" timer uses 'nvim-notify' to continuously display the timer
@@ -99,6 +101,14 @@ This is a complete list of all of the options that can be passed to `require("po
     -- You can also define custom notifiers by providing an "init" function instead of a name.
     -- See "Defining custom notifiers" below for an example 👇
     -- { init = function(timer) ... end }
+  },
+
+  -- Override the notifiers for specific timer names.
+  timers = {
+    -- For example, use only the "System" notifier when you create a timer called "Break"
+    Break = {
+      { name = "System" },
+    },
   },
 }
 ```

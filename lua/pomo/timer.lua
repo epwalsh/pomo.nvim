@@ -57,7 +57,12 @@ Timer.new = function(id, time_limit, name, config, repeat_n)
   self.timer = vim.loop.new_timer() ---@diagnostic disable-line: undefined-field
 
   self.notifiers = {}
-  for _, noti_opts in ipairs(self.config.notifiers) do
+  ---@type pomo.NotifierConfig[]
+  local noti_configs = self.config.notifiers
+  if self.name ~= nil and self.config.timers[self.name] ~= nil then
+    noti_configs = self.config.timers[self.name]
+  end
+  for _, noti_opts in ipairs(noti_configs) do
     local noti = notifier.build(self, noti_opts)
     self.notifiers[#self.notifiers + 1] = noti
   end
