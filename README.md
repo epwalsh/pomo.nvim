@@ -169,6 +169,9 @@ require("lualine").setup {
 }
 ```
 
+[![image](https://github.com/epwalsh/pomo.nvim/assets/8812459/ff2beac8-a26f-421a-a5a6-cbeca73bfcf2)](https://github.com/epwalsh/pomo.nvim/assets/8812459/ff2beac8-a26f-421a-a5a6-cbeca73bfcf2)
+
+
 ## Contributing
 
 Please see the [CONTRIBUTING](https://github.com/epwalsh/obsidian.nvim/blob/main/.github/CONTRIBUTING.md) guide from [obsidian.nvim](https://github.com/epwalsh/obsidian.nvim) before submitting a pull request, as this repository is set up and managed in the same way.
