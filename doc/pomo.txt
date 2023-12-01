@@ -100,6 +100,7 @@ read each option carefully and customize it to your needs:
         {
           name = "Default",
           opts = {
+            sticky = true,  -- set to false if you don't want to see the timer the whole time
             title_icon = "󱎫",
             text_icon = "󰄉",
             -- Replace the above with these if you don't have a patched font:
