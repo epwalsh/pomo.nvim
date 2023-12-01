@@ -40,14 +40,10 @@ Notifier.stop = function(self) ---@diagnostic disable-line: unused-local
 end
 
 ---Called to hide the timer's progress. Should have the opposite affect as `show()`.
-Notifier.hide = function(self) ---@diagnostic disable-line: unused-local
-  error "not implemented"
-end
+Notifier.hide = function(self) end ---@diagnostic disable-line: unused-local
 
 ---Called to show the timer's progress. Should have the opposite affect as `hide()`.
-Notifier.show = function(self) ---@diagnostic disable-line: unused-local
-  error "not implemented"
-end
+Notifier.show = function(self) end ---@diagnostic disable-line: unused-local
 
 ---The default implementation of `pomo.Notifier`, uses `vim.notify` to display the timer.
 ---@class pomo.DefaultNotifier : pomo.Notifier
