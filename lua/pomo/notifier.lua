@@ -45,6 +45,7 @@ end
 ---@field opts table
 ---@field title_icon string
 ---@field text_icon string
+---@field sticky boolean
 local DefaultNotifier = {}
 M.DefaultNotifier = DefaultNotifier
 
@@ -58,6 +59,7 @@ DefaultNotifier.new = function(timer, opts)
   self.opts = opts and opts or {}
   self.title_icon = self.opts.title_icon and self.opts.title_icon or "󱎫"
   self.text_icon = self.opts.text_icon and self.opts.text_icon or "󰄉"
+  self.sticky = self.opts.sticky ~= false
   return self
 end
 
@@ -95,11 +97,18 @@ end
 
 ---@param time_left number
 DefaultNotifier.tick = function(self, time_left)
-  self:_update(string.format(" %s  %s left...", self.text_icon, util.format_time(time_left)), "info", false)
+  if self.sticky then
+    self:_update(string.format(" %s  %s left...", self.text_icon, util.format_time(time_left)), "info", false)
+  end
 end
 
 DefaultNotifier.start = function(self)
-  self:_update(string.format(" %s  starting...", self.text_icon), "info", false)
+  ---@type integer|boolean
+  local timeout = false
+  if not self.sticky then
+    timeout = 1000
+  end
+  self:_update(string.format(" %s  starting...", self.text_icon), "info", timeout)
 end
 
 DefaultNotifier.done = function(self)

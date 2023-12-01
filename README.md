@@ -86,6 +86,7 @@ This is a complete list of all of the options that can be passed to `require("po
     {
       name = "Default",
       opts = {
+        sticky = true,  -- set to false if you don't want to see the timer the whole time
         title_icon = "󱎫",
         text_icon = "󰄉",
         -- Replace the above with these if you don't have a patched font:
