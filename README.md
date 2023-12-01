@@ -12,7 +12,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
-- ⏱️ Run multiple concurrent timers and repeat timers
+- ⏱️ Run multiple concurrent timers and repeat timers, show/hide, pause/resume
 - ➕ Integrate with [nvim-notify](https://github.com/rcarriga/nvim-notify), [lualine](#lualinenvim), and more
 
 ### Commands
