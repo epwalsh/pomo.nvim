@@ -133,6 +133,24 @@ Timer.stop = function(self)
   end
 end
 
+---Hide the timer's notifiers, if they support that.
+Timer.hide = function(self)
+  for _, noti in ipairs(self.notifiers) do
+    if noti.hide ~= nil then
+      noti:hide()
+    end
+  end
+end
+
+---Show the timer's notifiers, if they support that.
+Timer.show = function(self)
+  for _, noti in ipairs(self.notifiers) do
+    if noti.show ~= nil then
+      noti:show()
+    end
+  end
+end
+
 ---This is a class definition for the timer in `vim.loop` to help my language server.
 ---@class uv_timer_t
 ---@field start function

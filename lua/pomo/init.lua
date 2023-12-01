@@ -18,7 +18,7 @@ end
 ---@param name string|? A name for the timer. Does not have to be unique.
 ---@param repeat_n integer|? The number of the times to repeat the timer.
 ---@param cfg pomo.Config|? Override the config.
----@return integer timer_id The ID of the timer created.
+---@return pomo.Timer timer
 M.start_timer = function(time_limit, name, repeat_n, cfg)
   cfg = cfg and cfg or M.get_config()
   local timer_id = timers:first_available_id()
@@ -30,19 +30,61 @@ M.start_timer = function(time_limit, name, repeat_n, cfg)
     timers:remove(t)
   end)
 
-  return timer_id
+  return timer
 end
 
----Stop a timer. If no ID is given, the latest timer is stopped.
----@param timer_id integer|?
+---Stop a timer. If no timer or ID is given, the latest timer is stopped.
+---@param timer integer|pomo.Timer|?
 ---@return boolean success If the timer was stopped.
-M.stop_timer = function(timer_id)
-  local timer = timers:pop(timer_id)
-  if timer ~= nil then
+M.stop_timer = function(timer)
+  if type(timer) ~= "table" then
+    timer = timers:pop(timer) ---@diagnostic disable-line: param-type-mismatch
+  end
+  if not timer then
+    return false
+  else
     timer:stop()
     return true
+  end
+end
+
+---@param timer integer|pomo.Timer|?
+---@return pomo.Timer|?
+local function get_or_latest(timer)
+  if timer == nil then
+    return M.get_latest()
+  elseif type(timer) == "number" then
+    return M.get(timer)
+  elseif type(timer) == "table" then
+    return timer
   else
+    error("unexpected type for 'timer' parameter '" .. type(timer) .. "'")
+  end
+end
+
+---Hide a timer's notifiers (if they support that). If no timer ID is given, the latest timer is used.
+---@param timer integer|pomo.Timer|?
+---@return boolean success
+M.hide_timer = function(timer)
+  timer = get_or_latest(timer)
+  if not timer then
     return false
+  else
+    timer:hide()
+    return true
+  end
+end
+
+---Show a timer's notifiers (if they support that). If no timer or ID is given, the latest timer is used.
+---@param timer integer|pomo.Timer?
+---@return boolean success
+M.show_timer = function(timer)
+  timer = get_or_latest(timer)
+  if not timer then
+    return false
+  else
+    timer:show()
+    return true
   end
 end
 
