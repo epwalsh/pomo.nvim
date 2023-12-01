@@ -90,7 +90,7 @@ DefaultNotifier._update = function(self, text, level, timeout)
     icon = self.title_icon,
     title = title,
     timeout = timeout,
-    replace = self.notification,
+    replace = self.sticky and self.notification or nil,
     hide_from_history = true,
   })
 end
