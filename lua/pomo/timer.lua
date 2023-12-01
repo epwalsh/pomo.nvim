@@ -49,10 +49,15 @@ Timer.new = function(id, time_limit, name, config, repeat_n)
         repetitions_str = string.format(" [%d/%d]", self.repetitions + 1, self.max_repetitions)
       end
 
+      local paused_str = ""
+      if self.paused then
+        paused_str = " (paused)"
+      end
+
       if self.name ~= nil then
-        return string.format("#%d, %s: %s%s", self.id, self.name, time_str, repetitions_str)
+        return string.format("#%d, %s: %s%s%s", self.id, self.name, time_str, repetitions_str, paused_str)
       else
-        return string.format("#%d: %s%s", self.id, time_str, repetitions_str)
+        return string.format("#%d: %s%s%s", self.id, time_str, repetitions_str, paused_str)
       end
     end,
   })

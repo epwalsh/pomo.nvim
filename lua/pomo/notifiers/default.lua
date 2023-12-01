@@ -71,7 +71,16 @@ end
 ---@param time_left number
 DefaultNotifier.tick = function(self, time_left)
   if self.sticky then
-    self:_update(string.format(" %s  %s left...", self.text_icon, util.format_time(time_left)), "info", false)
+    self:_update(
+      string.format(
+        " %s  %s left...%s",
+        self.text_icon,
+        util.format_time(time_left),
+        self.timer.paused and " (paused)" or ""
+      ),
+      "info",
+      false
+    )
   end
 end
 
