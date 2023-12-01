@@ -5,7 +5,7 @@
 
 A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Technique) timer for Neovim, written in Lua.
 
-[![demo-gif](https://github.com/epwalsh/pomo.nvim/assets/8812459/e987203c-6e00-4e04-9012-2a1202953dab)](https://github.com/epwalsh/pomo.nvim/assets/8812459/e987203c-6e00-4e04-9012-2a1202953dab)
+[![demo](https://github.com/epwalsh/pomo.nvim/assets/8812459/37e58af1-c8d3-470e-b63f-35b22cd308af)](https://github.com/epwalsh/pomo.nvim/assets/8812459/37e58af1-c8d3-470e-b63f-35b22cd308af)
 
 ## Features
 
