@@ -12,6 +12,7 @@ M.NotifierType = NotifierType
 
 ---The abstract base class for notifiers. At a minimum each concrete implementation needs to provide
 ---the methods `self:tick()`, `self:start()`, `self:done()`, and `self:stop()`.
+---Optionally they can also provide `self:hide()` and `self:show()` methods.
 ---See `pomo.DefaultNotifier` for an example.
 ---@class pomo.Notifier
 local Notifier = {}
@@ -38,6 +39,12 @@ Notifier.stop = function(self) ---@diagnostic disable-line: unused-local
   error "not implemented"
 end
 
+---Called to hide the timer's progress. Should have the opposite affect as `show()`.
+Notifier.hide = function(self) end ---@diagnostic disable-line: unused-local
+
+---Called to show the timer's progress. Should have the opposite affect as `hide()`.
+Notifier.show = function(self) end ---@diagnostic disable-line: unused-local
+
 ---The default implementation of `pomo.Notifier`, uses `vim.notify` to display the timer.
 ---@class pomo.DefaultNotifier : pomo.Notifier
 ---@field timer pomo.Timer
@@ -46,6 +53,7 @@ end
 ---@field title_icon string
 ---@field text_icon string
 ---@field sticky boolean
+---@field _last_text string|?
 local DefaultNotifier = {}
 M.DefaultNotifier = DefaultNotifier
 
@@ -60,10 +68,11 @@ DefaultNotifier.new = function(timer, opts)
   self.title_icon = self.opts.title_icon and self.opts.title_icon or "󱎫"
   self.text_icon = self.opts.text_icon and self.opts.text_icon or "󰄉"
   self.sticky = self.opts.sticky ~= false
+  self._last_text = nil
   return self
 end
 
----@param text string
+---@param text string|?
 ---@param level string|integer
 ---@param timeout boolean|integer
 DefaultNotifier._update = function(self, text, level, timeout)
@@ -85,6 +94,16 @@ DefaultNotifier._update = function(self, text, level, timeout)
   else
     title = string.format("Timer #%d, %s%s", self.timer.id, util.format_time(self.timer.time_limit), repetitions_str)
   end
+
+  if text ~= nil then
+    self._last_text = text
+  elseif not self._last_text then
+    return
+  else
+    text = self._last_text
+  end
+
+  assert(text)
 
   self.notification = vim.notify(text, level, {
     icon = self.title_icon,
@@ -117,6 +136,19 @@ end
 
 DefaultNotifier.stop = function(self)
   self:_update(string.format(" %s  stopping...", self.text_icon), "info", 1000)
+end
+
+DefaultNotifier.hide = function(self)
+  self:_update(nil, "info", 100)
+  self.sticky = false
+end
+
+DefaultNotifier.show = function(self)
+  self.sticky = true
+  local time_left = self.timer:time_remaining()
+  if time_left ~= nil and time_left > 0 then
+    self:tick(time_left)
+  end
 end
 
 ---A `pomo.Notifier` that sends a system notification when the timer is finished.

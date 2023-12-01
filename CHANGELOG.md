@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Added `pomo.get_all_timers()` function.
 - Added `sticky` option to "Default" notifier.
+- Added ability to show/hide a timer's notifiers, if they support that, via the commands and functions:
+  - `:TimerShow` / `pomo.show_timer()`
+  - `:TimerHide` / `pomo.hide_timer()`
+- Made the "Default" timer hide-able, which has the same affect as the `sticky` option.
+
+### Changed
+
+- `pomo.start_timer(...)` now returns a `pomo.Timer` instead of an integer timer ID.
+- `pomo.stop_timer(...)` now takes a `pomo.Timer` or an integer timer ID.
 
 ## [v0.3.0](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.3.0) - 2023-11-30
 
