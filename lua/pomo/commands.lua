@@ -90,6 +90,20 @@ M.register_commands = function()
       pomo.show_timer(timer)
     end
   end, { nargs = "?" })
+
+  vim.api.nvim_create_user_command("TimerPause", function(data)
+    local timer = get_timer_from_arg(data.args)
+    if timer then
+      pomo.pause_timer(timer)
+    end
+  end, { nargs = "?" })
+
+  vim.api.nvim_create_user_command("TimerResume", function(data)
+    local timer = get_timer_from_arg(data.args)
+    if timer then
+      pomo.resume_timer(timer)
+    end
+  end, { nargs = "?" })
 end
 
 return M

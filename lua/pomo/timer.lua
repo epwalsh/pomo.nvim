@@ -1,16 +1,26 @@
 local notifier = require "pomo.notifier"
 local util = require "pomo.util"
 
+---Get the current timestamp in milliseconds.
+---@return number milliseconds
+local function now()
+  return vim.loop.now() ---@diagnostic disable-line: undefined-field
+end
+
 ---@class pomo.Timer
 ---@field id integer
 ---@field time_limit integer seconds
 ---@field name string|?
 ---@field timer uv_timer_t
----@field start_time integer|?
+---@field start_time number|? milliseconds
 ---@field notifiers pomo.Notifier[]
 ---@field config pomo.Config
 ---@field max_repetitions integer|?
 ---@field repetitions integer
+---@field paused boolean
+---@field paused_at number|? milliseconds
+---@field time_paused number milliseconds
+---@field resumed_at number|? milliseconds
 local Timer = {}
 
 ---Initialize a `pomo.Timer`.
@@ -54,6 +64,8 @@ Timer.new = function(id, time_limit, name, config, repeat_n)
   self.config = config
   self.max_repetitions = repeat_n
   self.repetitions = 0
+  self.paused = false
+  self.time_paused = 0
   self.timer = vim.loop.new_timer() ---@diagnostic disable-line: undefined-field
 
   self.notifiers = {}
@@ -70,23 +82,45 @@ Timer.new = function(id, time_limit, name, config, repeat_n)
   return self
 end
 
----Get the time remaining (in seconds) on the timer.
----@return number|? seconds
-Timer.time_remaining = function(self)
+---Get the time remaining in milliseconds on the timer.
+---@return number|? milliseconds
+Timer.time_remaining_ms = function(self)
   if self.start_time == nil then
     return nil
   end
 
-  local time_elapsed = (vim.loop.hrtime() - self.start_time) / 1000000000 ---@diagnostic disable-line: undefined-field
-  return self.time_limit - time_elapsed
+  ---@type number
+  local reference_time
+  if self.paused then
+    assert(self.paused_at)
+    reference_time = self.paused_at
+  else
+    reference_time = now()
+  end
+
+  local time_elapsed = reference_time - self.start_time - self.time_paused
+  return math.max(self.time_limit * 1000 - time_elapsed, 0)
+end
+
+---Get the time remaining in seconds on the timer.
+---@return number|? seconds
+Timer.time_remaining = function(self)
+  local time_left = self:time_remaining_ms()
+  if time_left ~= nil then
+    return time_left / 1000
+  else
+    return nil
+  end
 end
 
 ---Start the timer.
 ---@param timer_done function|? callback(timer)
 ---@return pomo.Timer
 Timer.start = function(self, timer_done)
-  self.start_time = vim.loop.hrtime() ---@diagnostic disable-line: undefined-field
+  self.start_time = now()
+  self.paused = false
   self.repetitions = 0
+
   for _, noti in ipairs(self.notifiers) do
     noti:start()
   end
@@ -108,7 +142,7 @@ Timer.start = function(self, timer_done)
 
         if self.max_repetitions ~= nil and self.max_repetitions > 0 and self.repetitions + 1 < self.max_repetitions then
           self.repetitions = self.repetitions + 1
-          self.start_time = vim.loop.hrtime() ---@diagnostic disable-line: undefined-field
+          self.start_time = now()
           for _, noti in ipairs(self.notifiers) do
             noti:start()
           end
@@ -130,6 +164,26 @@ Timer.stop = function(self)
   self.timer:close()
   for _, noti in ipairs(self.notifiers) do
     noti:stop()
+  end
+end
+
+---Pause the timer.
+Timer.pause = function(self)
+  if self.start_time ~= nil and not self.paused then
+    self.paused_at = now()
+    self.paused = true
+  end
+end
+
+---Resume the timer.
+Timer.resume = function(self)
+  if self.paused then
+    assert(self.paused_at)
+    local current_time = now()
+    self.time_paused = self.time_paused + (current_time - self.paused_at)
+    self.resumed_at = current_time
+    self.paused_at = nil
+    self.paused = false
   end
 end
 
