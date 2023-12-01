@@ -7,7 +7,7 @@ A simple, customizable pomodoro
 Lua.
 
 
-<https://github.com/epwalsh/pomo.nvim/assets/8812459/e987203c-6e00-4e04-9012-2a1202953dab>
+<https://github.com/epwalsh/pomo.nvim/assets/8812459/37e58af1-c8d3-470e-b63f-35b22cd308af>
 
 
 ==============================================================================
@@ -264,7 +264,7 @@ funds! ❤️
 ==============================================================================
 7. Links                                                          *pomo-links*
 
-1. *demo-gif*: https://github.com/epwalsh/pomo.nvim/assets/8812459/e987203c-6e00-4e04-9012-2a1202953dab
+1. *demo*: https://github.com/epwalsh/pomo.nvim/assets/8812459/37e58af1-c8d3-470e-b63f-35b22cd308af
 2. *lualine screenshot*: https://github.com/epwalsh/pomo.nvim/assets/8812459/ff2beac8-a26f-421a-a5a6-cbeca73bfcf2
 3. *BuyMeACoffee*: https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black
 
