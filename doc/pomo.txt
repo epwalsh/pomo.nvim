@@ -139,8 +139,9 @@ read each option carefully and customize it to your needs:
 ==============================================================================
 4. Defining custom notifiers                  *pomo-defining-custom-notifiers*
 
-To define your own notifier you need to create a `pomo.Notifier` Lua class
-along with a factory `init` function to construct your notifier. Your
+To define your own notifier you need to create a `pomo.Notifier`
+<https://github.com/epwalsh/pomo.nvim/blob/main/lua/pomo/notifier.lua> Lua
+class along with a factory `init` function to construct your notifier. Your
 `Notifier` class needs to have the following methods
 
 - `Notifier.start(self)` - Called when the timer starts.
