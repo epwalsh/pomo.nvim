@@ -1,5 +1,6 @@
-local NotifierType = require("pomo.notifier").NotifierType
-local M = {}
+local NotifierType = require("pomo.notifiers").NotifierType
+
+local Config = {}
 
 ---@class pomo.Config
 ---@field update_interval integer
@@ -12,7 +13,7 @@ local M = {}
 ---@field opts table|?
 
 ---@return pomo.Config
-M.default = function()
+Config.default = function()
   return {
     update_interval = 1000,
     notifiers = {
@@ -24,8 +25,8 @@ end
 
 ---@param opts table|pomo.Config
 ---@return pomo.Config
-M.normalize = function(opts)
-  return vim.tbl_extend("force", M.default(), opts)
+Config.normalize = function(opts)
+  return vim.tbl_extend("force", Config.default(), opts)
 end
 
-return M
+return Config

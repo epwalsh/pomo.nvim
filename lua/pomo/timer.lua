@@ -1,4 +1,3 @@
-local notifier = require "pomo.notifier"
 local util = require "pomo.util"
 
 ---Get the current timestamp in milliseconds.
@@ -75,7 +74,7 @@ Timer.new = function(id, time_limit, name, config, repeat_n)
     noti_configs = self.config.timers[self.name]
   end
   for _, noti_opts in ipairs(noti_configs) do
-    local noti = notifier.build(self, noti_opts)
+    local noti = require("pomo.notifiers").build(self, noti_opts)
     self.notifiers[#self.notifiers + 1] = noti
   end
 

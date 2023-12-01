@@ -1,6 +1,4 @@
-local Timer = require "pomo.timer"
 local TimerStore = require "pomo.timer_store"
-local config = require "pomo.config"
 
 local M = {}
 
@@ -9,8 +7,14 @@ local timers = TimerStore.new()
 ---Setup pomo.nvim.
 ---@param opts table|pomo.Config
 M.setup = function(opts)
-  M._config = config.normalize(opts)
-  require("pomo.commands").register_commands()
+  local Config = require "pomo.config"
+  local commands = require "pomo.commands"
+
+  -- Normalize and store config.
+  M._config = Config.normalize(opts)
+
+  -- Register commands.
+  commands.register_all()
 end
 
 ---Start a new timer.
@@ -20,7 +24,10 @@ end
 ---@param cfg pomo.Config|? Override the config.
 ---@return pomo.Timer timer
 M.start_timer = function(time_limit, name, repeat_n, cfg)
+  local Timer = require "pomo.timer"
+
   cfg = cfg and cfg or M.get_config()
+
   local timer_id = timers:first_available_id()
   local timer = Timer.new(timer_id, time_limit, name, cfg, repeat_n)
 
