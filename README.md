@@ -131,6 +131,8 @@ To define your own notifier you need to create a `pomo.Notifier` Lua class along
 - `Notifier.done(self)` - Called when the timer finishes.
 - `Notifier.stop(self)` - Called when the timer is stopped before finishing.
 
+You can also provide optionally `Notifier.show(self)` and `Notifier.hide(self)` methods to respond to `:TimerShow` and `:TimerHide`.
+
 The factory `init` function takes 1 or 2 arguments, the `timer` (a `pomo.Timer`) and optionally a table of options from the `opts` field in the notifier's config.
 
 For example, here's a simple notifier that just uses `print`:
@@ -141,6 +143,7 @@ local PrintNotifier = {}
 PrintNotifier.new = function(timer, opts)
   local self = setmetatable({}, { __index = PrintNotifier })
   self.timer = timer
+  self.hidden = false
   self.opts = opts -- not used
   return self
 end
@@ -150,7 +153,9 @@ PrintNotifier.start = function(self)
 end
 
 PrintNotifier.tick = function(self, time_left)
-  print(string.format("Timer #%d, %s, %ds remaining...", self.timer.id, self.timer.name, time_left))
+  if not self.hidden then
+    print(string.format("Timer #%d, %s, %ds remaining...", self.timer.id, self.timer.name, time_left))
+  end
 end
 
 PrintNotifier.done = function(self)
@@ -158,6 +163,14 @@ PrintNotifier.done = function(self)
 end
 
 PrintNotifier.stop = function(self) end
+
+PrintNotifier.show = function(self)
+  self.hidden = false
+end
+
+PrintNotifier.hide = function(self)
+  self.hidden = true
+end
 ```
 
 And then in the `notifiers` field of your pomo.nvim config, you'd add the following entry:
