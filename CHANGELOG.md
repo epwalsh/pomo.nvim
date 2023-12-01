@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Fixed
+
+- Ensure stopped timers are removed from the timer store.
+
 ## [v0.4.0](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.4.0) - 2023-12-01
 
 ### Added

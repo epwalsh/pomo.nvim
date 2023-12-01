@@ -44,9 +44,14 @@ end
 ---@param timer integer|pomo.Timer|?
 ---@return boolean success If the timer was stopped.
 M.stop_timer = function(timer)
-  if type(timer) ~= "table" then
-    timer = timers:pop(timer) ---@diagnostic disable-line: param-type-mismatch
+  if timer == nil or type(timer) == "number" then
+    timer = timers:pop(timer)
+  elseif type(timer) == "table" then
+    timer = timers:pop(timer.id)
+  else
+    error("unexpected type for 'timer', got '" .. type(timer) .. "'")
   end
+
   if not timer then
     return false
   else
