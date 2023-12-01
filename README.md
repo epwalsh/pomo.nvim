@@ -116,7 +116,7 @@ This is a complete list of all of the options that can be passed to `require("po
 
 ## Defining custom notifiers
 
-To define your own notifier you need to create a Lua `Notifier` class along with a factory `init` function to construct your notifier. Your `Notifier` class needs to have the following methods
+To define your own notifier you need to create a `pomo.Notifier` Lua class along with a factory `init` function to construct your notifier. Your `Notifier` class needs to have the following methods
 
 - `Notifier.start(self)` - Called when the timer starts.
 - `Notifier.tick(self, time_left)` - Called periodically (e.g. every second) while the timer is active. The `time_left` argument is the number of seconds left on the timer.
