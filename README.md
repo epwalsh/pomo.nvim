@@ -12,7 +12,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 - 🪶 Lightweight and asynchronous
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
-- ⏱️ Run multiple concurrent timers and repeat timers
+- ⏱️ Run multiple concurrent timers and repeat timers, show/hide, pause/resume
 - ➕ Integrate with [nvim-notify](https://github.com/rcarriga/nvim-notify), [lualine](#lualinenvim), and more
 
 ### Commands
@@ -30,6 +30,14 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 - `:TimerStop [TIMERID]` to stop a running timer, e.g. `:TimerStop 1`. If no ID is given, the latest timer is stopped.
 
 - `:TimerRepeat TIMELIMIT REPETITIONS [NAME]` to start a repeat timer, e.g. `:TimerRepeat 10s 2` to repeat a 10 second timer twice.
+
+- `:TimerHide [TIMERID]` to hide the notifiers of a running timer, if the notifiers support that. If no ID is given, the latest timer's notifiers are hidden.
+
+- `:TimerShow [TIMERID]` the opposite of `:TimerHide`.
+
+- `:TimerPause [TIMERID]` pause a timer. If no ID is given, the latest timer is paused.
+
+- `:TimerResume [TIMERID]` the opposite of `:TimerPause`.
 
 ## Setup
 

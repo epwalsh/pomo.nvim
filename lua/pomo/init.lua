@@ -62,6 +62,32 @@ local function get_or_latest(timer)
   end
 end
 
+---Pause a timer.
+---@param timer integer|pomo.Timer|?
+---@return boolean success
+M.pause_timer = function(timer)
+  timer = get_or_latest(timer)
+  if not timer then
+    return false
+  else
+    timer:pause()
+    return true
+  end
+end
+
+---Resume a timer.
+---@param timer integer|pomo.Timer|?
+---@return boolean success
+M.resume_timer = function(timer)
+  timer = get_or_latest(timer)
+  if not timer then
+    return false
+  else
+    timer:resume()
+    return true
+  end
+end
+
 ---Hide a timer's notifiers (if they support that). If no timer ID is given, the latest timer is used.
 ---@param timer integer|pomo.Timer|?
 ---@return boolean success

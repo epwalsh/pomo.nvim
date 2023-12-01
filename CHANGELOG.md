@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - `:TimerShow` / `pomo.show_timer()`
   - `:TimerHide` / `pomo.hide_timer()`
 - Made the "Default" timer hide-able, which has the same affect as the `sticky` option.
+- Added ability to pause/resume timers via the commands and functions:
+  - `:TimerPause` / `pomo.pause_timer()`
+  - `:TimerResume` / `pomo.resume_timer()`
 
 ### Changed
 
