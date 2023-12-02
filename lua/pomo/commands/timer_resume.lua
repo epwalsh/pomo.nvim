@@ -1,9 +1,11 @@
 local pomo = require "pomo"
-local get_timer_from_arg = require("pomo.commands.util").get_timer_from_arg
+local get_timers_from_arg = require("pomo.commands.util").get_timers_from_arg
 
 return function(data)
-  local timer = get_timer_from_arg(data.args)
-  if timer then
-    pomo.resume_timer(timer)
+  local timers = get_timers_from_arg(data.args)
+  if timers then
+    for _, timer in ipairs(timers) do
+      pomo.resume_timer(timer)
+    end
   end
 end
