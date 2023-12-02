@@ -52,6 +52,11 @@ COMMANDS                                                       *pomo-commands*
 - `:TimerResume [TIMERID]` the opposite of `:TimerPause`.
 
 
+
+**💡 Tip:** You can pass `-1` as the `TIMERID` to apply the command to all
+active timers.
+
+
 ==============================================================================
 2. Setup                                                          *pomo-setup*
 
