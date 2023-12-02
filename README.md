@@ -3,9 +3,11 @@
 <div align="center"><a href="https://github.com/epwalsh/pomo.nvim/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/epwalsh/pomo.nvim?style=for-the-badge&logo=starship&logoColor=D9E0EE&labelColor=302D41&&color=d9b3ff&include_prerelease&sort=semver" /></a> <a href="https://github.com/epwalsh/pomo.nvim/pulse"><img alt="Last commit" src="https://img.shields.io/github/last-commit/epwalsh/pomo.nvim?style=for-the-badge&logo=github&logoColor=D9E0EE&labelColor=302D41&color=9fdf9f"/></a> <a href="https://github.com/neovim/neovim/releases/latest"><img alt="Latest Neovim" src="https://img.shields.io/github/v/release/neovim/neovim?style=for-the-badge&logo=neovim&logoColor=D9E0EE&label=Neovim&labelColor=302D41&color=99d6ff&sort=semver" /></a> <a href="http://www.lua.org/"><img alt="Made with Lua" src="https://img.shields.io/badge/Built%20with%20Lua-grey?style=for-the-badge&logo=lua&logoColor=D9E0EE&label=Lua&labelColor=302D41&color=b3b3ff"></a></div>
 <hr>
 
-A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Technique) timer for Neovim, written in Lua.
+A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Technique) timer plugin for Neovim, written in Lua.
 
 [![demo](https://github.com/epwalsh/pomo.nvim/assets/8812459/37e58af1-c8d3-470e-b63f-35b22cd308af)](https://github.com/epwalsh/pomo.nvim/assets/8812459/37e58af1-c8d3-470e-b63f-35b22cd308af)
+
+In **pomo.nvim**, most of the functionality is surfaced through the [`Notifier`](https://github.com/epwalsh/pomo.nvim/blob/main/lua/pomo/notifier.lua) instances you [configure](#configuration-options). A timer can have any number of notifiers, which are essentially callbacks that fire on every tick of the timer (determined by [`update_interval`](#configuration-options)) and each significant event, such as when the timer starts, completes, is stopped, or is hidden. **pomo.nvim** comes with [several notifiers](https://github.com/epwalsh/pomo.nvim/tree/main/lua/pomo/notifiers) out-of-the-box, but it's also easy to [create your own](#defining-custom-notifiers).
 
 ## Features
 
@@ -25,7 +27,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
   - `:TimerStart 10s` to start a timer for 10 seconds.
   - `:TimerStart 1h30m` to start a timer for an hour and a half.
 
-  pomo.nvim will recognize multiple forms of the time units, such as "m", "min", "minute", or "minutes" for minutes.
+  **pomo.nvim** will recognize multiple forms of the time units, such as "m", "min", "minute", or "minutes" for minutes.
 
 - `:TimerStop [TIMERID]` to stop a running timer, e.g. `:TimerStop 1`. If no ID is given, the latest timer is stopped.
 
@@ -41,7 +43,7 @@ A simple, customizable [pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Techniq
 
 ## Setup
 
-To setup pomo.nvim you just need to call `require("pomo").setup({ ... })` with the desired options. Here are some examples using different plugin managers. The full set of [configuration options](#configuration-options) are listed below.
+To setup **pomo.nvim** you just need to call `require("pomo").setup({ ... })` with the desired options. Here are some examples using different plugin managers. The full set of [configuration options](#configuration-options) are listed below.
 
 ### Using [`lazy.nvim`](https://github.com/folke/lazy.nvim)
 
@@ -81,6 +83,7 @@ use({
 
 ## Configuration options
 
+
 This is a complete list of all of the options that can be passed to `require("pomo").setup()`. The values represent reasonable defaults, but please read each option carefully and customize it to your needs:
 
 ```lua
@@ -88,13 +91,20 @@ This is a complete list of all of the options that can be passed to `require("po
   -- How often the notifiers are updated.
   update_interval = 1000,
 
-  -- Configure the notifiers to use for each timer that's created.
+  -- Configure the default notifiers to use for each timer.
+  -- You can also configure different notifiers for timers given specific names, see
+  -- the 'timers' field below.
   notifiers = {
-    -- The "Default" timer uses 'nvim-notify' to continuously display the timer
+    -- The "Default" notifier uses 'vim.notify' and works best when you have 'nvim-notify' installed.
     {
       name = "Default",
       opts = {
-        sticky = true,  -- set to false if you don't want to see the timer the whole time
+        -- With 'nvim-notify', when 'sticky = true' you'll have a live timer pop-up
+        -- continuously displayed. If you only want a pop-up notification when the timer starts
+        -- and finishes, set this to false.
+        sticky = true,
+
+        -- Configure the display icons:
         title_icon = "󱎫",
         text_icon = "󰄉",
         -- Replace the above with these if you don't have a patched font:
@@ -105,6 +115,7 @@ This is a complete list of all of the options that can be passed to `require("po
 
     -- The "System" notifier sends a system notification when the timer is finished.
     -- Currently this is only available on MacOS.
+    -- Tracking: https://github.com/epwalsh/pomo.nvim/issues/3
     { name = "System" },
 
     -- You can also define custom notifiers by providing an "init" function instead of a name.
@@ -114,7 +125,8 @@ This is a complete list of all of the options that can be passed to `require("po
 
   -- Override the notifiers for specific timer names.
   timers = {
-    -- For example, use only the "System" notifier when you create a timer called "Break"
+    -- For example, use only the "System" notifier when you create a timer called "Break",
+    -- e.g. ':TimerStart 2m Break'.
     Break = {
       { name = "System" },
     },
@@ -173,7 +185,7 @@ PrintNotifier.hide = function(self)
 end
 ```
 
-And then in the `notifiers` field of your pomo.nvim config, you'd add the following entry:
+And then in the `notifiers` field of your **pomo.nvim** config, you'd add the following entry:
 
 ```lua
   { init = PrintNotifier.new, opts = {} }
@@ -187,7 +199,7 @@ The "Default" notifier integrates seamlessly with `nvim-notify`, you just need t
 
 ### [lualine.nvim](https://github.com/nvim-lualine/lualine.nvim)
 
-pomo.nvim can easily be added to a section in your `lualine`. For example, this would extend the defaults for section X to include the next timer to finish (min time remaining):
+**pomo.nvim** can easily be added to a section in your `lualine`. For example, this would extend the defaults for section X to include the next timer to finish (min time remaining):
 
 ```lua
 require("lualine").setup {
