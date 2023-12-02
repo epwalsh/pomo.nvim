@@ -41,6 +41,10 @@ In **pomo.nvim**, most of the functionality is surfaced through the [`Notifier`]
 
 - `:TimerResume [TIMERID]` the opposite of `:TimerPause`.
 
+<br>
+
+**💡 Tip:** You can pass `-1` as the `TIMERID` to apply the command to all active timers.
+
 ## Setup
 
 To setup **pomo.nvim** you just need to call `require("pomo").setup({ ... })` with the desired options. Here are some examples using different plugin managers. The full set of [configuration options](#configuration-options) are listed below.

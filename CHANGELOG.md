@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+
+- You can now pass `-1` as the `TIMERID` to apply a command to all active timers.
+
 ## [v0.4.1](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.4.1) - 2023-12-01
 
 ### Fixed
