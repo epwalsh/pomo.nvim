@@ -59,7 +59,13 @@ DefaultNotifier._update = function(self, text, level, timeout)
 
   assert(text)
 
-  self.notification = vim.notify(text, level, {
+  local ok, notify = pcall(require, "notify")
+  if not ok then
+    ---@diagnostic disable-next-line: cast-local-type
+    notify = vim.notify
+  end
+
+  self.notification = notify(text, level, {
     icon = self.title_icon,
     title = title,
     timeout = timeout,
