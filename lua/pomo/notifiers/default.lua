@@ -84,7 +84,7 @@ DefaultNotifier.tick = function(self, time_left)
         util.format_time(time_left),
         self.timer.paused and " (paused)" or ""
       ),
-      "info",
+      vim.log.levels.INFO,
       false
     )
   end
@@ -96,19 +96,19 @@ DefaultNotifier.start = function(self)
   if not self.sticky then
     timeout = 1000
   end
-  self:_update(string.format(" %s  starting...", self.text_icon), "info", timeout)
+  self:_update(string.format(" %s  starting...", self.text_icon), vim.log.levels.INFO, timeout)
 end
 
 DefaultNotifier.done = function(self)
-  self:_update(string.format(" %s  timer done!", self.text_icon), "warn", 3000)
+  self:_update(string.format(" %s  timer done!", self.text_icon), vim.log.levels.WARN, 3000)
 end
 
 DefaultNotifier.stop = function(self)
-  self:_update(string.format(" %s  stopping...", self.text_icon), "info", 1000)
+  self:_update(string.format(" %s  stopping...", self.text_icon), vim.log.levels.INFO, 1000)
 end
 
 DefaultNotifier.hide = function(self)
-  self:_update(nil, "info", 100)
+  self:_update(nil, vim.log.levels.INFO, 100)
   self.sticky = false
 end
 
