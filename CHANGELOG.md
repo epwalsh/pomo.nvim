@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Fixed
+
+- Fixed bug with default notifier and `vim.notify` when timer starts as hidden and then you use `:TimerShow`.
+
 ## [v0.4.3](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.4.3) - 2024-01-07
 
 ### Fixed

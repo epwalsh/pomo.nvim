@@ -65,13 +65,17 @@ DefaultNotifier._update = function(self, text, level, timeout)
     notify = vim.notify
   end
 
-  self.notification = notify(text, level, {
+  local notification = notify(text, level, {
     icon = self.title_icon,
     title = title,
     timeout = timeout,
-    replace = self.sticky and self.notification or nil,
+    replace = self.notification,
     hide_from_history = true,
   })
+
+  if self.sticky then
+    self.notification = notification
+  end
 end
 
 ---@param time_left number
