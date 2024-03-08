@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Fixed
+
+- Fixed another bug with default notifier when `sticky=true`.
+
 ## [v0.4.4](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.4.4) - 2024-03-07
 
 ### Fixed
