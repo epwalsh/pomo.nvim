@@ -75,6 +75,8 @@ DefaultNotifier._update = function(self, text, level, timeout)
 
   if self.sticky then
     self.notification = notification
+  else
+    self.notification = nil
   end
 end
 
@@ -112,8 +114,8 @@ DefaultNotifier.stop = function(self)
 end
 
 DefaultNotifier.hide = function(self)
-  self:_update(nil, vim.log.levels.INFO, 100)
   self.sticky = false
+  self:_update(nil, vim.log.levels.INFO, 100)
 end
 
 DefaultNotifier.show = function(self)
