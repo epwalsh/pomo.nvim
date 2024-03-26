@@ -50,9 +50,10 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
   elseif util.get_os() == util.OS.Linux then
     os.execute(
       string.format(
-        [[notify-send -u critical -i 'appointment-soon' 'Timer #%d, %s' 'Timer done!']],
+        [[notify-send -u critical -i "appointment-soon" "Timer %d, %s%s" "Timer done!"]],
         self.timer.id,
-        util.format_time(self.timer.time_limit)
+        util.format_time(self.timer.time_limit),
+        repetitions_str
       )
     )
   else
