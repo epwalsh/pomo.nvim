@@ -8,7 +8,7 @@ local util = require "pomo.util"
 ---@field opts table
 local SystemNotifier = {}
 
-SystemNotifier.supported_oss = { util.OS.Darwin }
+SystemNotifier.supported_oss = { util.OS.Darwin, util.OS.Linux }
 
 ---@param timer pomo.Timer
 ---@param opts table|?
