@@ -47,6 +47,14 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
         repetitions_str
       )
     )
+  elseif util.get_os() == util.OS.Linux then
+    os.execute(
+      string.format(
+        [[notify-send -a 'Timer' -i 'utilities-timer' 'Timer #%d, %s' 'Timer done!']],
+        self.timer.id,
+        util.format_time(self.timer.time_limit)
+      )
+    )
   else
     return log.error("SystemNotifier is not implemented for your OS (%s)", util.get_os())
   end
