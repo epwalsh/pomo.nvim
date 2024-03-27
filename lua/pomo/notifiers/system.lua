@@ -8,7 +8,7 @@ local util = require "pomo.util"
 ---@field opts table
 local SystemNotifier = {}
 
-SystemNotifier.supported_oss = { util.OS.Darwin }
+SystemNotifier.supported_oss = { util.OS.Darwin, util.OS.Linux }
 
 ---@param timer pomo.Timer
 ---@param opts table|?
@@ -42,6 +42,15 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
     os.execute(
       string.format(
         [[osascript -e 'display notification "Timer done!" with title "Timer #%d, %s%s" sound name "Ping"']],
+        self.timer.id,
+        util.format_time(self.timer.time_limit),
+        repetitions_str
+      )
+    )
+  elseif util.get_os() == util.OS.Linux then
+    os.execute(
+      string.format(
+        [[notify-send -u critical -i "appointment-soon" "Timer %d, %s%s" "Timer done!"]],
         self.timer.id,
         util.format_time(self.timer.time_limit),
         repetitions_str

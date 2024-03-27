@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## Added
+
+- Added Linux support for System notifications.
+
 ## [v0.4.5](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.4.5) - 2024-03-08
 
 ### Fixed
