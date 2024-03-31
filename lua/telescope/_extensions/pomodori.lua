@@ -127,7 +127,7 @@ pomodori_timers = function(opts)
     end,
   }):find()
   -- print help
-  print ("Mapping: [ <C-p> Pause | <C-r> Resume | <C-h> Hide | <C-v> Show/View | <C-S> Stop | <Enter> Close ]")
+  print ("Mapping: [ <C-p> Pause | <C-r> Resume | <C-h> Hide | <C-v> Show/View | <C-s> Stop | <Enter> Close ]")
 end
 
 return require("telescope").register_extension(
