@@ -20,7 +20,7 @@ end
 local refresh = function(bufnr)
   actions.close(bufnr)
   if pomodori_timers ~= nil then
-    pomodori_timers(themes.get_dropdown{})
+    pomodori_timers(options)
   end
 end
 
