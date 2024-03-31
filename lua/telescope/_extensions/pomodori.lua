@@ -135,7 +135,7 @@ end
 return require("telescope").register_extension(
   {
     exports = {
-      pomodori_timers = pomodori_timers,
+      pomodori = pomodori_timers,
     }
   }
 )
