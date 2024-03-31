@@ -71,36 +71,30 @@ end
 
 
 -- our picker function: colors
-local pomo_timers = function(opts)
-  opts = opts or {}
-
+pomodori_timers = function(opts)
   local timers = {}
   for _,timer in pairs(pomo.get_all_timers()) do
-  --  table.insert(timers, tostring(timer))
-    local key = tostring(timer)
-    local _,_,h = key:find("([%d]+)h")
-    local _,_,m = key:find("([%d]+)m")
-    local _,_,s = key:find("([%d]+)s")
-    h = h or "00"
-    m = m or "00"
-    s = s or "00"
-    table.insert(timers,{
-      key = key,
-      val = timer,
-      ord = "1" .. h .. m .. s,
-    })
+    table.insert(timers, timer)
   end
 
   table.sort(timers, function(a,b) return a.ord < b.ord end)
 
-  pickers.new(opts, {
-    prompt_title = "colors",
+  pickers.new(opts or themes.get_dropdown(), {
+    prompt_title = "Pomodori Timers",
     finder = finders.new_table {
       results = timers,
       entry_maker = function(entry)
-        entry.value = entry.val
-        entry.display = entry.key
-        entry.ordinal = entry.ord
+        local key = tostring(timer)
+        local _,_,h = key:find("([%d]+)h")
+        local _,_,m = key:find("([%d]+)m")
+        local _,_,s = key:find("([%d]+)s")
+        h = h or "00"
+        m = m or "00"
+        s = s or "00"
+
+        entry.value = entry
+        entry.display = key
+        entry.ordinal = 1 .. h .. m .. s
         return entry
       end
     },
@@ -134,12 +128,11 @@ local pomo_timers = function(opts)
   }):find()
 end
 
-pomodori_timers = pomo_timers
 
 return require("telescope").register_extension(
   {
     exports = {
-      timers = pomo_timers,
+      timers = pomodori_timers,
     }
   }
 )
