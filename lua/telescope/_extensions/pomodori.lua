@@ -101,7 +101,7 @@ pomodori_timers = function(opts)
         return entry
       end
     },
-    sorter = conf.generic_sorter(opts),
+    sorter = conf.generic_sorter(options),
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
