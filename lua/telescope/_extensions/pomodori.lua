@@ -72,6 +72,8 @@ end
 
 -- our picker function: colors
 pomodori_timers = function(opts)
+  opts = opts or {}
+
   local timers = {}
   for _,timer in pairs(pomo.get_all_timers()) do
   --  table.insert(timers, tostring(timer))
