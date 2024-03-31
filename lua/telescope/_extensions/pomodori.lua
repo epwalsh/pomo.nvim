@@ -71,7 +71,7 @@ end
 
 
 -- our picker function: colors
-pomodori_timers = function(opts)
+local pomo_timers = function(opts)
   opts = opts or {}
 
   local timers = {}
@@ -134,10 +134,12 @@ pomodori_timers = function(opts)
   }):find()
 end
 
+pomodori_timers = pomo_timers
+
 return require("telescope").register_extension(
   {
     exports = {
-      pomodori = pomodori_timers,
+      timers = pomo_timers,
     }
   }
 )
