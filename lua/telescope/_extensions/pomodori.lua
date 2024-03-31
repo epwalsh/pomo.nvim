@@ -7,6 +7,7 @@ local pomo = require("pomo")
 local themes = require("telescope.themes")
 
 local pomodori_timers = nil
+local options = {}
 
 local get_timer = function(bufnr)
   local timer = action_state.get_selected_entry(bufnr)
@@ -19,7 +20,7 @@ end
 local refresh = function(bufnr)
   actions.close(bufnr)
   if pomodori_timers ~= nil then
-    pomodori_timers(themes.get_dropdown{})
+    pomodori_timers(options)
   end
 end
 
@@ -72,6 +73,8 @@ end
 
 -- our picker function: colors
 pomodori_timers = function(opts)
+  options = opts or themes.get_dropdown()
+
   local timers = {}
   for _,timer in pairs(pomo.get_all_timers()) do
     table.insert(timers, timer)
@@ -79,7 +82,7 @@ pomodori_timers = function(opts)
 
   table.sort(timers, function(a,b) return a.ord < b.ord end)
 
-  pickers.new(opts or themes.get_dropdown(), {
+  pickers.new(options, {
     prompt_title = "Pomodori Timers",
     finder = finders.new_table {
       results = timers,
@@ -98,14 +101,10 @@ pomodori_timers = function(opts)
         return entry
       end
     },
-    sorter = conf.generic_sorter(opts),
+    sorter = conf.generic_sorter(options),
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
-        local selection = action_state.get_selected_entry()
-        if selection ~= nil then
-          pomo.show_timer(selection.id)
-        end
       end)
 
       map("n", "<C-p>", pause_timer)
@@ -126,6 +125,7 @@ pomodori_timers = function(opts)
       return true
     end,
   }):find()
+  print ("Mapping: [ <C-p> Pause | <C-r> Resume | <C-h> Hide | <C-v> Show/View | <C-S> Stop | <Esc>/<Enter> Close ]")
 end
 
 
