@@ -105,7 +105,7 @@ pomodori_timers = function(opts)
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
         actions.close(prompt_bufnr)
-        print("") -- clear help in command line
+        print(" ") -- clear help in command line
       end)
 
       map("n", "<C-p>", pause_timer)
