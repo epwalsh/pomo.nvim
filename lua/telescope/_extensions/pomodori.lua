@@ -91,7 +91,7 @@ pomodori_timers = function(opts)
 
   table.sort(timers, function(a,b) return a.ord < b.ord end)
 
-  pickers.new({}, {
+  pickers.new(opts, {
     prompt_title = "colors",
     finder = finders.new_table {
       results = timers,
