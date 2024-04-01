@@ -1,4 +1,6 @@
 local pickers = require "telescope.pickers"
+local previewers = require "telescope.previewers"
+local utils = require('telescope.previewers.utils')
 local finders = require "telescope.finders"
 local conf = require("telescope.config").values
 local actions = require "telescope.actions"
@@ -72,8 +74,18 @@ local stop_timer = function(bufnr)
   print("Didn't stop timer")
 end
 
+local close = function(bufnr)
+  actions.close(bufnr)
+end
+
 pomodori_timers = function(opts)
-  options = opts or themes.get_dropdown()
+  options = opts or themes.get_dropdown({
+    layout_strategy = "horizontal",
+    layout_config = {
+      width = 80,
+      preview_width = 16
+    }
+  })
   local timers = {}
   for _,timer in pairs(pomo.get_all_timers()) do
     local key = tostring(timer)
@@ -102,10 +114,32 @@ pomodori_timers = function(opts)
       end
     },
     sorter = conf.generic_sorter(options),
+    previewer =  previewers.new_buffer_previewer({
+      title = "Key Map Info",
+      define_preview = function(self, _, _)
+        local buf = self.state.bufnr
+        utils.highlighter(buf, "markdown")
+        vim.api.nvim_buf_set_option(buf, 'modifiable', true)
+        vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
+        vim.api.nvim_buf_set_lines(buf, 0, -1, true, {
+          "",
+          "   <C-p> Pause",
+          "   <C-r> Resume  ",
+          "",
+          "   <C-h> Hide",
+          "   <C-v> View",
+          "",
+          "   <C-s> Stop",
+          "",
+          "   <Esc> Close",
+          " <Enter> Close"
+        })
+        vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+      end
+    }),
     attach_mappings = function(prompt_bufnr, map)
       actions.select_default:replace(function()
-        actions.close(prompt_bufnr)
-        print(" ") -- clear help in command line
+        close(prompt_bufnr)
       end)
 
       map("n", "<C-p>", pause_timer)
@@ -123,17 +157,17 @@ pomodori_timers = function(opts)
       map("n", "<C-s>", stop_timer)
       map("i", "<C-s>", stop_timer)
 
+      map("n", "<esc>", close)
+      map("i", "<esc>", close)
       return true
     end,
   }):find()
-  -- print help
-  print ("Mapping: [ <C-p> Pause | <C-r> Resume | <C-h> Hide | <C-v> Show/View | <C-s> Stop | <Enter> Close ]")
 end
 
 return require("telescope").register_extension(
   {
     exports = {
-      timers = pomodori_timers,
+      timers = function() pomodori_timers() end
     }
   }
 )
