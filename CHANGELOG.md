@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Added
+
+- Added Telescope integration (#20).
+
 ## [v0.5.0](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.5.0) - 2024-03-27
 
 ## Added
