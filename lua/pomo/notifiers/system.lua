@@ -41,8 +41,9 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
   if util.get_os() == util.OS.Darwin then
     os.execute(
       string.format(
-        [[osascript -e 'display notification "Timer done!" with title "Timer #%d, %s%s" sound name "Ping"']],
+        [[osascript -e 'display notification "Timer done!" with title "Timer #%d%s%s%s" sound name "Ping"']],
         self.timer.id,
+        ( self.timer.name and ' ('..self.timer.name..'), ' or ', ' ),
         util.format_time(self.timer.time_limit),
         repetitions_str
       )
@@ -50,8 +51,9 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
   elseif util.get_os() == util.OS.Linux then
     os.execute(
       string.format(
-        [[notify-send -u critical -i "appointment-soon" "Timer %d, %s%s" "Timer done!"]],
+        [[notify-send -u critical -i "appointment-soon" "Timer %d%s%s%s" "Timer done!"]],
         self.timer.id,
+        ( self.timer.name and ' ('..self.timer.name..'), ' or ', ' ),
         util.format_time(self.timer.time_limit),
         repetitions_str
       )
