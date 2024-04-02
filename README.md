@@ -232,7 +232,7 @@ require("lualine").setup {
 
 [![lualine screenshot](https://github.com/epwalsh/pomo.nvim/assets/8812459/ff2beac8-a26f-421a-a5a6-cbeca73bfcf2)](https://github.com/epwalsh/pomo.nvim/assets/8812459/ff2beac8-a26f-421a-a5a6-cbeca73bfcf2)
 
-### Telescope.nvim
+### [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim)
 
 Pomo.nvim ships with a telescope extension for managing timers. Here's an example of mapping the keys `<leader>pt` to open the telescope picker for timers.
 
