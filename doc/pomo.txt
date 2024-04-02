@@ -26,7 +26,7 @@ out-of-the-box, but it’s also easy to |pomo-create-your-own|.
 - 💻 Written in Lua
 - ⚙️ Easily customizable and extendable
 - ⏱️ Run multiple concurrent timers and repeat timers, show/hide, pause/resume
-- ➕ Integrate with nvim-notify <https://github.com/rcarriga/nvim-notify>, |pomo-lualine|, and more
+- ➕ Integrate with nvim-notify <https://github.com/rcarriga/nvim-notify>, |pomo-lualine|, telescope <https://github.com/nvim-telescope/telescope.nvim>, and more
 
 
 COMMANDS                                                       *pomo-commands*
@@ -268,6 +268,23 @@ finish (min time remaining):
 
 
 <https://github.com/epwalsh/pomo.nvim/assets/8812459/ff2beac8-a26f-421a-a5a6-cbeca73bfcf2>
+
+
+TELESCOPE.NVIM                                           *pomo-telescope.nvim*
+
+Pomo.nvim ships with a telescope extension for managing timers. Here’s an
+example of mapping the keys `<leader>pt` to open the telescope picker for
+timers.
+
+>lua
+    require("telescope").load_extension "pomodori"
+    
+    vim.keymap.set("n", "<leader>pt", function()
+      require("telescope").extensions.pomodori.timers(
+        require("telescope.themes").get_dropdown()
+      )
+    end, { desc = "Manage Pomodori Timers"})
+<
 
 
 ==============================================================================
