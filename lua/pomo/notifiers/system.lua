@@ -43,7 +43,7 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
       string.format(
         [[osascript -e 'display notification "Timer done!" with title "Timer #%d%s%s%s" sound name "Ping"']],
         self.timer.id,
-        ( self.timer.name and ' ('..self.timer.name..'), ' or ', ' ),
+        (self.timer.name and " (" .. self.timer.name .. "), " or ", "),
         util.format_time(self.timer.time_limit),
         repetitions_str
       )
@@ -53,7 +53,7 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
       string.format(
         [[notify-send -u critical -i "appointment-soon" "Timer %d%s%s%s" "Timer done!"]],
         self.timer.id,
-        ( self.timer.name and ' ('..self.timer.name..'), ' or ', ' ),
+        (self.timer.name and " (" .. self.timer.name .. "), " or ", "),
         util.format_time(self.timer.time_limit),
         repetitions_str
       )
