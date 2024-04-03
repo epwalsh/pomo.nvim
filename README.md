@@ -240,9 +240,7 @@ Pomo.nvim ships with a telescope extension for managing timers. Here's an exampl
 require("telescope").load_extension "pomodori"
 
 vim.keymap.set("n", "<leader>pt", function()
-  require("telescope").extensions.pomodori.timers(
-    require("telescope.themes").get_dropdown()
-  )
+  require("telescope").extensions.pomodori.timers()
 end, { desc = "Manage Pomodori Timers"})
 ```
 
