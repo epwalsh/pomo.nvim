@@ -38,6 +38,7 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
     repetitions_str = string.format(" [%d/%d]", self.timer.repetitions + 1, self.timer.max_repetitions)
   end
 
+  -- macOS Notification
   if util.get_os() == util.OS.Darwin then
     os.execute(
       string.format(
@@ -48,12 +49,31 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
         repetitions_str
       )
     )
+  -- Linux Notification
   elseif util.get_os() == util.OS.Linux then
     os.execute(
       string.format(
         [[notify-send -u critical -i "appointment-soon" "Timer %d%s%s%s" "Timer done!"]],
         self.timer.id,
         (self.timer.name and " (" .. self.timer.name .. "), " or ", "),
+        util.format_time(self.timer.time_limit),
+        repetitions_str
+      )
+    )
+  -- Windows Notification
+  elseif util.get_os() == util.OS.Windows then
+    os.execute(
+      string.format(
+        [[
+        PowerShell -Command "Add-Type -AssemblyName System.Windows.Forms;
+        $notify = New-Object System.Windows.Forms.NotifyIcon;
+        $notify.Icon = [System.Drawing.SystemIcons]::Information;
+        $notify.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::Info;
+        $notify.BalloonTipText = 'Timer #%d, %s%s';
+        $notify.BalloonTipTitle = 'Timer done!';
+        $notify.Visible = $true;
+        $notify.ShowBalloonTip(10000);" ]],
+        self.timer.id,
         util.format_time(self.timer.time_limit),
         repetitions_str
       )
