@@ -118,8 +118,7 @@ This is a complete list of all of the options that can be passed to `require("po
     },
 
     -- The "System" notifier sends a system notification when the timer is finished.
-    -- Available on MacOS natively and Linux via the `libnotify-bin` package.
-    -- Tracking: https://github.com/epwalsh/pomo.nvim/issues/3
+    -- Available on MacOS and Windows natively and on Linux via the `libnotify-bin` package.
     { name = "System" },
 
     -- You can also define custom notifiers by providing an "init" function instead of a name.
