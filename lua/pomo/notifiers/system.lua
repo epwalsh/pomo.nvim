@@ -78,6 +78,24 @@ SystemNotifier.done = function(self) ---@diagnostic disable-line: unused-local
         repetitions_str
       )
     )
+  elseif util.get_os() == util.OS.Linux then
+    os.execute(
+      string.format(
+        [[notify-send "Timer #%d, %s%s" "Timer done!" -i notification-message-im,dialog-information]],
+        self.timer.id,
+        util.format_time(self.timer.time_limit),
+        repetitions_str
+      )
+    )
+  elseif util.get_os() == util.OS.Windows then 
+    os.execute(
+      string.format(
+        [[powershell -Command 'New-BurntToastNotification -Text "Timer done ⏲"']]
+        self.timer.id,
+        util.format_time(self.timer.time_limit),
+        repetitions_str
+      )
+    )
   else
     return log.error("SystemNotifier is not implemented for your OS (%s)", util.get_os())
   end
