@@ -6,6 +6,7 @@ local command_lookups = {
   TimerShow = "pomo.commands.timer_show",
   TimerPause = "pomo.commands.timer_pause",
   TimerResume = "pomo.commands.timer_resume",
+  PomoSession = "pomo.commands.timer_session", -- Add PomoSession command
 }
 
 local M = setmetatable({}, {
@@ -50,6 +51,10 @@ M.register_all = function()
   vim.api.nvim_create_user_command("TimerResume", function(data)
     return M.TimerResume(data)
   end, { nargs = "?" })
+
+  vim.api.nvim_create_user_command("PomoSession", function(data) -- Register PomoSession command
+    return M.PomoSession(data)
+  end, { nargs = 1 })
 end
 
 return M
