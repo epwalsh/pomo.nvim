@@ -4,7 +4,7 @@ local pomo = require "pomo"
 return function(data)
   local session_name = data.args
   if not session_name or session_name == "" then
-    return log.error "Session name is required.\nUsage: PomoSession <session_name>"
+    return log.error "Session name is required.\nUsage: TimerSession <session_name>"
   end
 
   local config = pomo.get_config()
@@ -13,21 +13,22 @@ return function(data)
     return log.error("Session '%s' not found", session_name)
   end
 
-  local function start_session(session, index)
-    if index > #session then
+  local function start_session(current_session, index)
+    if index > #current_session then
+      log.info("Session '%s' completed", session_name)
       return
     end
 
-    local timer_config = session[index]
+    local timer_config = current_session[index]
     local time_limit = require("pomo.util").parse_time(timer_config.duration)
     if not time_limit then
-      log.error(string.format("Invalid time duration '%s' in session '%s'", timer_config.duration, session_name))
+      log.error("Invalid time duration '%s' in session '%s'", timer_config.duration, session_name)
       return
     end
 
     local timer = pomo.start_timer(time_limit, timer_config.name)
     timer:start(function()
-      start_session(session, index + 1)
+      start_session(current_session, index + 1)
     end)
   end
 
