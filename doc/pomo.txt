@@ -50,6 +50,23 @@ COMMANDS                                                       *pomo-commands*
 - `:TimerPause [TIMERID]` pause a timer. If no ID is given, the latest timer is
     paused.
 - `:TimerResume [TIMERID]` the opposite of `:TimerPause`.
+- `:TimerSession [SESSION_NAME]` to start a predefined Pomodoro session.
+    Example session configuration in your setup:
+    >lua
+        require("pomo").setup({
+          sessions = {
+            pomodoro = {
+              { name = "Work", duration = "25m" },
+              { name = "Short Break", duration = "5m" },
+              { name = "Work", duration = "25m" },
+              { name = "Short Break", duration = "5m" },
+              { name = "Work", duration = "25m" },
+              { name = "Long Break", duration = "15m" },
+            },
+          },
+        })
+    <
+    To start the above session, use: `:TimerSession pomodoro`.
 
 
 
@@ -152,6 +169,18 @@ read each option carefully and customize it to your needs:
         -- e.g. ':TimerStart 2m Break'.
         Break = {
           { name = "System" },
+        },
+      },
+      -- You can optionally define custom timer sessions.
+      sessions = {
+        -- Example session configuration for a session called "pomodoro".
+        pomodoro = {
+          { name = "Work", duration = "25m" },
+          { name = "Short Break", duration = "5m" },
+          { name = "Work", duration = "25m" },
+          { name = "Short Break", duration = "5m" },
+          { name = "Work", duration = "25m" },
+          { name = "Long Break", duration = "15m" },
         },
       },
     }
