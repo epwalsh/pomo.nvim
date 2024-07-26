@@ -45,7 +45,7 @@ In **pomo.nvim**, most of the functionality is surfaced through the [`Notifier`]
 
   Example session configuration in your setup:
 
-```lua
+  ```lua
   require("pomo").setup({
     sessions = {
       pomodoro = {
@@ -58,8 +58,9 @@ In **pomo.nvim**, most of the functionality is surfaced through the [`Notifier`]
       },
     },
   })
-```
-To start the above session, use: :TimerSession pomodoro
+  ```
+
+  To start the above session, use: `:TimerSession pomodoro`.
 
 <br>
 
@@ -154,7 +155,7 @@ This is a complete list of all of the options that can be passed to `require("po
       { name = "System" },
     },
   },
--- You can optionally define custom timer sessions.
+  -- You can optionally define custom timer sessions.
   sessions = {
     -- Example session configuration for a session called "pomodoro".
     pomodoro = {
