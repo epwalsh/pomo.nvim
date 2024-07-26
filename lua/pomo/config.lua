@@ -6,11 +6,16 @@ local Config = {}
 ---@field update_interval integer
 ---@field notifiers pomo.NotifierConfig[]
 ---@field timers table<string, pomo.NotifierConfig[]>
+---@field sessions table<string, pomo.SessionConfig[]>  -- Add sessions field
 
 ---@class pomo.NotifierConfig
 ---@field name pomo.NotifierType|?
 ---@field init function|? function(timer_id, time_limit, name, opts)
 ---@field opts table|?
+
+---@class pomo.SessionConfig  -- Define session config
+---@field name string
+---@field duration string
 
 ---@return pomo.Config
 Config.default = function()
@@ -20,6 +25,7 @@ Config.default = function()
       { name = NotifierType.Default },
     },
     timers = {},
+    sessions = {}, -- Initialize sessions
   }
 end
 

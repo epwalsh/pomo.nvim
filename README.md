@@ -41,6 +41,27 @@ In **pomo.nvim**, most of the functionality is surfaced through the [`Notifier`]
 
 - `:TimerResume [TIMERID]` the opposite of `:TimerPause`.
 
+- `:TimerSession [SESSION_NAME]` to start a predefined Pomodoro session.
+
+  Example session configuration in your setup:
+
+  ```lua
+  require("pomo").setup({
+    sessions = {
+      pomodoro = {
+        { name = "Work", duration = "25m" },
+        { name = "Short Break", duration = "5m" },
+        { name = "Work", duration = "25m" },
+        { name = "Short Break", duration = "5m" },
+        { name = "Work", duration = "25m" },
+        { name = "Long Break", duration = "15m" },
+      },
+    },
+  })
+  ```
+
+  To start the above session, use: `:TimerSession pomodoro`.
+
 <br>
 
 **💡 Tip:** You can pass `-1` as the `TIMERID` to apply the command to all active timers.
@@ -132,6 +153,18 @@ This is a complete list of all of the options that can be passed to `require("po
     -- e.g. ':TimerStart 2m Break'.
     Break = {
       { name = "System" },
+    },
+  },
+  -- You can optionally define custom timer sessions.
+  sessions = {
+    -- Example session configuration for a session called "pomodoro".
+    pomodoro = {
+      { name = "Work", duration = "25m" },
+      { name = "Short Break", duration = "5m" },
+      { name = "Work", duration = "25m" },
+      { name = "Short Break", duration = "5m" },
+      { name = "Work", duration = "25m" },
+      { name = "Long Break", duration = "15m" },
     },
   },
 }

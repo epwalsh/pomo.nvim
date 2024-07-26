@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+- Added `:TimerSession <session_name>` command to create and manage Pomodoro like sessions.
+
+### Added
 
 - Added Windows support for System notifications.
 
