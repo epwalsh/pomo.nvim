@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [v0.7.0](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.7.0) - 2024-07-26
+
 ### Added
 
 - Added `:TimerSession <session_name>` command to create and manage Pomodoro like sessions.
