@@ -1,3 +1,5 @@
+local pomo = require "pomo"
+
 local command_lookups = {
   TimerStart = "pomo.commands.timer_start",
   TimerStop = "pomo.commands.timer_stop",
@@ -54,7 +56,13 @@ M.register_all = function()
 
   vim.api.nvim_create_user_command("TimerSession", function(data)
     return M.TimerSession(data)
-  end, { nargs = 1 })
+  end, {
+    nargs = "?",
+    complete = function()
+      local config = pomo.get_config()
+      return vim.tbl_keys(config.sessions or {})
+    end,
+  })
 end
 
 return M

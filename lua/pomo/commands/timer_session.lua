@@ -2,12 +2,18 @@ local log = require "pomo.log"
 local pomo = require "pomo"
 
 return function(data)
-  local session_name = data.args
-  if not session_name or session_name == "" then
-    return log.error "Session name is required.\nUsage: TimerSession <session_name>"
+  local config = pomo.get_config()
+
+  ---@type string
+  local session_name
+  if data.args and string.len(data.args) > 0 then
+    session_name = data.args
+  elseif config.sessions and #vim.tbl_keys(config.sessions) == 1 then
+    session_name = vim.tbl_keys(config.sessions)[1]
+  else
+    return log.error "Please provide a session name.\nUsage: TimerSession <session_name>"
   end
 
-  local config = pomo.get_config()
   local session = config.sessions[session_name]
   if not session then
     return log.error("Session '%s' not found", session_name)
