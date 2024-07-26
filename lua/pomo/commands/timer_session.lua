@@ -32,10 +32,12 @@ return function(data)
       return
     end
 
-    local timer = pomo.start_timer(time_limit, timer_config.name)
-    timer:start(function()
-      start_session(current_session, index + 1)
-    end)
+    pomo.start_timer(time_limit, {
+      name = timer_config.name,
+      timer_done = function()
+        start_session(current_session, index + 1)
+      end,
+    })
   end
 
   start_session(session, 1)

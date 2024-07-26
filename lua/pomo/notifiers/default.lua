@@ -100,7 +100,7 @@ DefaultNotifier.start = function(self)
   ---@type integer|boolean
   local timeout = false
   if not self.sticky then
-    timeout = 1000
+    timeout = 2000
   end
   self:_update(string.format(" %s  starting...", self.text_icon), vim.log.levels.INFO, timeout)
 end

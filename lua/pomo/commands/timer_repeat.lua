@@ -19,5 +19,5 @@ return function(data)
 
   local name = data.fargs[3]
 
-  pomo.start_timer(time_limit, name, repititions)
+  pomo.start_timer(time_limit, { name = name, repeat_n = repititions })
 end

@@ -7,11 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## Unreleased
 
 ### Added
+
 - Added `:TimerSession <session_name>` command to create and manage Pomodoro like sessions.
-
-### Added
-
 - Added Windows support for System notifications.
+
+### Changed
+
+- Changed the arguments of `pomo.start_timer()` to accept a table of options.
 
 ## [v0.6.0](https://github.com/epwalsh/pomo.nvim/releases/tag/v0.6.0) - 2024-04-02
 

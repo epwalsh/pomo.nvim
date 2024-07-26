@@ -19,22 +19,27 @@ end
 
 ---Start a new timer.
 ---@param time_limit integer The time limit, in seconds.
----@param name string|? A name for the timer. Does not have to be unique.
----@param repeat_n integer|? The number of the times to repeat the timer.
----@param cfg pomo.Config|? Override the config.
+---@param opts string|{ name: string|?, repeat_n: integer|?, cfg: pomo.Config|?, timer_done: fun() }|?
 ---@return pomo.Timer timer
-M.start_timer = function(time_limit, name, repeat_n, cfg)
+M.start_timer = function(time_limit, opts)
   local Timer = require "pomo.timer"
 
-  cfg = cfg and cfg or M.get_config()
+  opts = opts or {}
+  if type(opts) == "string" then
+    opts = { name = opts }
+  end
 
+  local cfg = opts.cfg or M.get_config()
   local timer_id = timers:first_available_id()
-  local timer = Timer.new(timer_id, time_limit, name, cfg, repeat_n)
+  local timer = Timer.new(timer_id, time_limit, opts.name, cfg, opts.repeat_n)
 
   timers:store(timer)
 
   timer:start(function(t)
     timers:remove(t)
+    if opts.timer_done then
+      opts.timer_done()
+    end
   end)
 
   return timer
