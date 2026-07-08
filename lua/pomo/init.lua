@@ -1,17 +1,18 @@
 local TimerStore = require "pomo.timer_store"
 
+---@class pomo
 local M = {}
 
 local timers = TimerStore.new()
 
 ---Setup pomo.nvim.
----@param opts table|pomo.Config
-M.setup = function(opts)
+---@param opts? pomoOpts
+function M.setup(opts)
   local Config = require "pomo.config"
   local commands = require "pomo.commands"
 
   -- Normalize and store config.
-  M._config = Config.normalize(opts)
+  M._config = Config.normalize(opts or {})
 
   -- Register commands.
   commands.register_all()
@@ -19,9 +20,9 @@ end
 
 ---Start a new timer.
 ---@param time_limit integer The time limit, in seconds.
----@param opts string|{ name: string|?, repeat_n: integer|?, cfg: pomo.Config|?, timer_done: fun() }|?
+---@param opts? string|{ name?: string, repeat_n?: integer, cfg?: pomoOpts, timer_done: function }
 ---@return pomo.Timer timer
-M.start_timer = function(time_limit, opts)
+function M.start_timer(time_limit, opts)
   local Timer = require "pomo.timer"
 
   opts = opts or {}
@@ -46,129 +47,125 @@ M.start_timer = function(time_limit, opts)
 end
 
 ---Stop a timer. If no timer or ID is given, the latest timer is stopped.
----@param timer integer|pomo.Timer|?
+---@param timer? integer|pomo.Timer
 ---@return boolean success If the timer was stopped.
-M.stop_timer = function(timer)
-  if timer == nil or type(timer) == "number" then
+function M.stop_timer(timer)
+  if timer and type(timer) ~= "table" and type(timer) ~= "number" then
+    error("unexpected type for 'timer', got '" .. type(timer) .. "'")
+  end
+  if not timer or type(timer) == "number" then
     timer = timers:pop(timer)
   elseif type(timer) == "table" then
     timer = timers:pop(timer.id)
-  else
-    error("unexpected type for 'timer', got '" .. type(timer) .. "'")
   end
 
   if not timer then
     return false
-  else
-    timer:stop()
-    return true
   end
+  timer:stop()
+  return true
 end
 
----@param timer integer|pomo.Timer|?
----@return pomo.Timer|?
+---@param timer? integer|pomo.Timer
+---@return pomo.Timer|? timer
 local function get_or_latest(timer)
   if timer == nil then
     return M.get_latest()
-  elseif type(timer) == "number" then
-    return M.get(timer)
-  elseif type(timer) == "table" then
-    return timer
-  else
-    error("unexpected type for 'timer' parameter '" .. type(timer) .. "'")
   end
+  if type(timer) == "number" then
+    return M.get_timer(timer)
+  end
+  if type(timer) == "table" then
+    return timer
+  end
+  error("unexpected type for 'timer' parameter '" .. type(timer) .. "'")
 end
 
 ---Pause a timer.
----@param timer integer|pomo.Timer|?
+---@param timer? integer|pomo.Timer
 ---@return boolean success
-M.pause_timer = function(timer)
+function M.pause_timer(timer)
   timer = get_or_latest(timer)
   if not timer then
     return false
-  else
-    timer:pause()
-    return true
   end
+  timer:pause()
+  return true
 end
 
 ---Resume a timer.
----@param timer integer|pomo.Timer|?
+---@param timer? integer|pomo.Timer
 ---@return boolean success
-M.resume_timer = function(timer)
+function M.resume_timer(timer)
   timer = get_or_latest(timer)
   if not timer then
     return false
-  else
-    timer:resume()
-    return true
   end
+  timer:resume()
+  return true
 end
 
 ---Hide a timer's notifiers (if they support that). If no timer ID is given, the latest timer is used.
----@param timer integer|pomo.Timer|?
+---@param timer? integer|pomo.Timer
 ---@return boolean success
-M.hide_timer = function(timer)
+function M.hide_timer(timer)
   timer = get_or_latest(timer)
   if not timer then
     return false
-  else
-    timer:hide()
-    return true
   end
+  timer:hide()
+  return true
 end
 
 ---Show a timer's notifiers (if they support that). If no timer or ID is given, the latest timer is used.
----@param timer integer|pomo.Timer?
+---@param timer? integer|pomo.Timer
 ---@return boolean success
-M.show_timer = function(timer)
+function M.show_timer(timer)
   timer = get_or_latest(timer)
   if not timer then
     return false
-  else
-    timer:show()
-    return true
   end
+  timer:show()
+  return true
 end
 
 ---Get the config.
----@return pomo.Config
-M.get_config = function()
-  if M._config == nil then
+---@return pomoOpts config
+function M.get_config()
+  if not M._config then
     error "pomo.nvim has not been setup yet, did you forget to call 'require('pomo').setup({})'?"
-  else
-    return M._config
   end
+  return M._config
 end
 
 ---Get a timer by its ID.
 ---@param timer_id integer
----@return pomo.Timer|?
-M.get_timer = function(timer_id)
+---@return pomo.Timer|? timer
+function M.get_timer(timer_id)
   return timers:get(timer_id)
 end
 
 ---Get the number of currently active timers.
----@return integer
-M.num_active_timers = function()
+---@return integer timers
+function M.num_active_timers()
   return timers:len()
 end
 
 ---Get the latest timer (last one added/started) out of all active timers.
----@return pomo.Timer|?
-M.get_latest = function()
+---@return pomo.Timer|? timer
+function M.get_latest()
   return timers:get_latest()
 end
 
 ---Get the first timer to finish next (minimum time remaining) out of all active timers.
----@return pomo.Timer|?
-M.get_first_to_finish = function()
+---@return pomo.Timer|? timer
+function M.get_first_to_finish()
   return timers:get_first_to_finish()
 end
 
 ---Get a list of all active timers.
----@return pomo.Timer[]
-M.get_all_timers = function()
+---@return pomo.Timer[] timers
+function M.get_all_timers()
   return timers:get_all()
 end
 

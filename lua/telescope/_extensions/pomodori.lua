@@ -8,63 +8,68 @@ local action_state = require "telescope.actions.state"
 local pomo = require "pomo"
 local themes = require "telescope.themes"
 
-local pomodori_timers = nil
+local pomodori_timers = nil ---@type nil|fun(opts?: table)
 local options = {}
 
-local get_timer = function(bufnr)
-  local selection = action_state.get_selected_entry(bufnr)
-  if selection ~= nil and selection.value ~= nil and selection.value.id ~= nil then
+local function get_timer()
+  local selection = action_state.get_selected_entry()
+  if selection and selection.value and selection.value.id then
     return selection.value
   end
-  return nil
 end
 
-local refresh = function(bufnr)
+---@param bufnr integer
+local function refresh(bufnr)
   actions.close(bufnr)
-  if pomodori_timers ~= nil then
+  if pomodori_timers then
     pomodori_timers(options)
   end
 end
 
-local pause_timer = function(bufnr)
-  local timer = get_timer(bufnr)
+---@param bufnr integer
+local function pause_timer(bufnr)
+  local timer = get_timer()
   if timer ~= nil then
     pomo.pause_timer(timer)
   end
   refresh(bufnr)
 end
 
-local resume_timer = function(bufnr)
-  local timer = get_timer(bufnr)
-  if timer ~= nil then
+---@param bufnr integer
+local function resume_timer(bufnr)
+  local timer = get_timer()
+  if timer then
     pomo.resume_timer(timer)
   end
   refresh(bufnr)
 end
 
-local hide_timer = function(bufnr)
-  local timer = get_timer(bufnr)
-  if timer ~= nil then
+---@param bufnr integer
+local function hide_timer(bufnr)
+  local timer = get_timer()
+  if timer then
     pomo.hide_timer(timer)
   end
   refresh(bufnr)
 end
 
-local view_timer = function(bufnr)
-  local timer = get_timer(bufnr)
-  if timer ~= nil then
+---@param bufnr integer
+local function view_timer(bufnr)
+  local timer = get_timer()
+  if timer then
     pomo.show_timer(timer)
   end
   refresh(bufnr)
 end
 
-local stop_timer = function(bufnr)
-  local timer = get_timer(bufnr)
-  if timer == nil then
+---@param bufnr integer
+local function stop_timer(bufnr)
+  local timer = get_timer()
+  if not timer then
     return
   end
-  local confirm = vim.fn.input(string.format("Stop timer %s? [y/n]: ", tostring(timer)))
-  if string.sub(string.lower(confirm), 0, 1) == "y" then
+  local confirm = vim.fn.input(("Stop timer %s? [y/n]: "):format(tostring(timer)))
+  if confirm:lower():sub(0, 1) == "y" then
     pomo.stop_timer(timer)
     refresh(bufnr)
     return
@@ -72,7 +77,8 @@ local stop_timer = function(bufnr)
   print "Didn't stop timer"
 end
 
-local close = function(bufnr)
+---@param bufnr integer
+local function close(bufnr)
   actions.close(bufnr)
 end
 
@@ -118,11 +124,11 @@ pomodori_timers = function(opts)
       sorter = conf.generic_sorter(options),
       previewer = previewers.new_buffer_previewer {
         title = "Key Map Info",
-        define_preview = function(self, _, _)
+        define_preview = function(self)
           local buf = self.state.bufnr
           utils.highlighter(buf, "markdown")
-          vim.api.nvim_buf_set_option(buf, "modifiable", true)
-          vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
+          vim.api.nvim_set_option_value("modifiable", true, { buf = buf })
+          vim.api.nvim_set_option_value("buftype", "nofile", { buf = buf })
           vim.api.nvim_buf_set_lines(buf, 0, -1, true, {
             "",
             "   <C-p> Pause",
@@ -136,9 +142,10 @@ pomodori_timers = function(opts)
             "   <Esc> Close",
             " <Enter> Close",
           })
-          vim.api.nvim_buf_set_option(buf, "modifiable", false)
+          vim.api.nvim_set_option_value("modifiable", false, { buf = buf })
         end,
       },
+      ---@param prompt_bufnr integer
       attach_mappings = function(prompt_bufnr, map)
         actions.select_default:replace(function()
           close(prompt_bufnr)
@@ -169,8 +176,6 @@ end
 
 return require("telescope").register_extension {
   exports = {
-    timers = function()
-      pomodori_timers()
-    end,
+    timers = pomodori_timers,
   },
 }
