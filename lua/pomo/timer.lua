@@ -73,7 +73,7 @@ end
 ---Get the time remaining in milliseconds on the timer.
 ---@return integer|? milliseconds
 function Timer:time_remaining_ms()
-  if self.start_time then
+  if not self.start_time then
     return
   end
 
