@@ -115,11 +115,7 @@ function Timer:start(timer_done)
     1000,
     self.config.update_interval,
     vim.schedule_wrap(function()
-      local time_left = self:time_remaining()
-      if not time_left then
-        return
-      end
-
+      local time_left = assert(self:time_remaining())
       if time_left > 0 then
         for _, noti in ipairs(self.notifiers) do
           noti:tick(time_left)
