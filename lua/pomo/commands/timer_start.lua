@@ -1,18 +1,16 @@
-local log = require "pomo.log"
-local pomo = require "pomo"
-local util = require "pomo.util"
-
+---@param data vim.api.keyset.create_user_command.command_args
 return function(data)
-  if data.fargs == nil or #data.fargs == 0 or #data.fargs > 2 then
-    return log.error "invalid number arguments, expected 1 or 2.\nUsage: TimerStart TIMELIMIT [NAME]"
+  local log = require "pomo.log"
+  if not (data.fargs and vim.list_contains({ 1, 2 }, #data.fargs)) then
+    log.error "invalid number arguments, expected 1 or 2.\nUsage: TimerStart TIMELIMIT [NAME]"
+    return
   end
 
-  local time_limit = util.parse_time(data.fargs[1])
-  if time_limit == nil then
-    return log.error("invalid time limit '%s'", data.fargs[1])
+  local time_limit = require("pomo.util").parse_time(data.fargs[1])
+  if not time_limit then
+    log.error("invalid time limit '%s'", data.fargs[1])
+    return
   end
 
-  local name = data.fargs[2]
-
-  pomo.start_timer(time_limit, name)
+  require("pomo").start_timer(time_limit, data.fargs[2])
 end

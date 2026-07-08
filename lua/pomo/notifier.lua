@@ -6,30 +6,30 @@
 local Notifier = {}
 
 ---Called periodically (e.g. every second) while the timer is active.
----@param time_left number
-Notifier.tick = function(self, time_left) ---@diagnostic disable-line: unused-local
+---@param _ integer
+function Notifier:tick(_)
   error "not implemented"
 end
 
 ---Called when the timer starts.
-Notifier.start = function(self) ---@diagnostic disable-line: unused-local
+function Notifier:start()
   error "not implemented"
 end
 
 ---Called when the timer finishes.
-Notifier.done = function(self) ---@diagnostic disable-line: unused-local
+function Notifier:done()
   error "not implemented"
 end
 
 ---Called when the timer is stopped before finishing.
-Notifier.stop = function(self) ---@diagnostic disable-line: unused-local
+function Notifier:stop()
   error "not implemented"
 end
 
 ---Called to hide the timer's progress. Should have the opposite affect as `show()`.
-Notifier.hide = function(self) end ---@diagnostic disable-line: unused-local
+function Notifier:hide() end
 
 ---Called to show the timer's progress. Should have the opposite affect as `hide()`.
-Notifier.show = function(self) end ---@diagnostic disable-line: unused-local
+function Notifier.show() end
 
 return Notifier

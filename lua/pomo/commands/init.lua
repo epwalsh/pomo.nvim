@@ -1,5 +1,4 @@
-local pomo = require "pomo"
-
+---@enum pomo.Commands.CommandLookups
 local command_lookups = {
   TimerStart = "pomo.commands.timer_start",
   TimerStop = "pomo.commands.timer_stop",
@@ -11,21 +10,29 @@ local command_lookups = {
   TimerSession = "pomo.commands.timer_session",
 }
 
+---@class pomo.Commands
+---@field TimerHide fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerPause fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerRepeat fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerResume fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerSession fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerShow fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerStart fun(data: vim.api.keyset.create_user_command.command_args)
+---@field TimerStop fun(data: vim.api.keyset.create_user_command.command_args)
 local M = setmetatable({}, {
+  ---@param t pomo.Commands
+  ---@param k string|integer
   __index = function(t, k)
-    local require_path = command_lookups[k]
-    if not require_path then
+    if not command_lookups[k] then
       return
     end
 
-    local mod = require(require_path)
-    t[k] = mod
-
-    return mod
+    t[k] = require(command_lookups[k])
+    return t[k]
   end,
 })
 
-M.register_all = function()
+function M.register_all()
   vim.api.nvim_create_user_command("TimerStart", function(data)
     return M.TimerStart(data)
   end, { nargs = "+" })
@@ -54,13 +61,10 @@ M.register_all = function()
     return M.TimerResume(data)
   end, { nargs = "?" })
 
-  vim.api.nvim_create_user_command("TimerSession", function(data)
-    return M.TimerSession(data)
-  end, {
+  vim.api.nvim_create_user_command("TimerSession", M.TimerSession, {
     nargs = "?",
     complete = function()
-      local config = pomo.get_config()
-      return vim.tbl_keys(config.sessions or {})
+      return vim.tbl_keys(require("pomo").get_config().sessions or {})
     end,
   })
 end

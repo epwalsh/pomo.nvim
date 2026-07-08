@@ -3,50 +3,49 @@ local module_lookups = {
   System = "pomo.notifiers.system",
 }
 
+---@class pomo.Notifiers
+---@field Default pomo.DefaultNotifier
+---@field System pomo.SystemNotifier
 local M = setmetatable({}, {
+  ---@param t pomo.Notifiers
+  ---@param k string|integer
   __index = function(t, k)
-    local require_path = module_lookups[k]
-    if not require_path then
+    if not module_lookups[k] then
       return
     end
 
-    local mod = require(require_path)
-    t[k] = mod
-
-    return mod
+    t[k] = require(module_lookups[k])
+    return t[k]
   end,
 })
 
 ---@enum pomo.NotifierType
-local NotifierType = {
+M.NotifierType = {
   Default = "Default",
   System = "System",
 }
 
-M.NotifierType = NotifierType
-
 ---Construct a `pomo.Notifier` given a notifier name (`pomo.NotifierType`) or factory function.
 ---@param timer pomo.Timer
 ---@param opts pomo.NotifierConfig
----@return pomo.Notifier
-M.build = function(timer, opts)
-  if (opts.name == nil) == (opts.init == nil) then
+---@return pomo.Notifier|? notifier
+function M.build(timer, opts)
+  if not (opts.name or opts.init) then
     error "invalid notifier config, 'name' and 'init' are mutually exclusive"
   end
 
-  if opts.init ~= nil then
+  if opts.init then
     assert(opts.init)
-    return opts.init(timer, opts)
-  else
-    assert(opts.name)
-    if opts.name == NotifierType.Default then
-      return M.Default.new(timer, opts.opts)
-    elseif opts.name == NotifierType.System then
-      return M.System.new(timer, opts.opts)
-    else
-      error(string.format("invalid notifier name '%s'", opts.name))
-    end
+    return opts.init(timer.id, timer.time_limit, timer.name, opts)
   end
+  assert(opts.name)
+  if opts.name == M.NotifierType.Default then
+    return M.Default.new(timer, opts.opts)
+  end
+  if opts.name == M.NotifierType.System then
+    return M.System.new(timer, opts.opts)
+  end
+  error(("invalid notifier name '%s'"):format(opts.name))
 end
 
 return M

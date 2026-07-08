@@ -2,23 +2,23 @@ local util = require "pomo.util"
 
 ---The default implementation of `pomo.Notifier`, uses `vim.notify` to display the timer.
 ---@class pomo.DefaultNotifier : pomo.Notifier
----@field timer pomo.Timer
+---@field _last_text? string
 ---@field notification any
 ---@field opts table
----@field title_icon string
----@field text_icon string
 ---@field sticky boolean
----@field _last_text string|?
+---@field text_icon string
+---@field timer pomo.Timer
+---@field title_icon string
 local DefaultNotifier = {}
 
 ---@param timer pomo.Timer
----@param opts table|?
----@return pomo.DefaultNotifier
-DefaultNotifier.new = function(timer, opts)
+---@param opts? table
+---@return pomo.DefaultNotifier notifier
+function DefaultNotifier.new(timer, opts)
   local self = setmetatable({}, { __index = DefaultNotifier })
   self.timer = timer
   self.notification = nil
-  self.opts = opts and opts or {}
+  self.opts = opts or {}
   self.title_icon = self.opts.title_icon and self.opts.title_icon or "󱎫"
   self.text_icon = self.opts.text_icon and self.opts.text_icon or "󰄉"
   self.sticky = self.opts.sticky ~= false
@@ -26,44 +26,40 @@ DefaultNotifier.new = function(timer, opts)
   return self
 end
 
----@param text string|?
+---@param text? string
 ---@param level string|integer
 ---@param timeout boolean|integer
-DefaultNotifier._update = function(self, text, level, timeout)
+function DefaultNotifier:_update(text, level, timeout)
   local repetitions_str = ""
-  if self.timer.max_repetitions ~= nil and self.timer.max_repetitions > 0 then
-    repetitions_str = string.format(" [%d/%d]", self.timer.repetitions + 1, self.timer.max_repetitions)
+  if self.timer.max_repetitions and self.timer.max_repetitions > 0 then
+    repetitions_str = (" [%d/%d]"):format(self.timer.repetitions + 1, self.timer.max_repetitions)
   end
 
-  ---@type string
-  local title
-  if self.timer.name ~= nil then
-    title = string.format(
-      "Timer #%d, %s, %s%s",
+  local title ---@type string
+  if self.timer.name then
+    title = ("Timer #%d, %s, %s%s"):format(
       self.timer.id,
       self.timer.name,
       util.format_time(self.timer.time_limit),
       repetitions_str
     )
   else
-    title = string.format("Timer #%d, %s%s", self.timer.id, util.format_time(self.timer.time_limit), repetitions_str)
+    title = ("Timer #%d, %s%s"):format(self.timer.id, util.format_time(self.timer.time_limit), repetitions_str)
   end
 
-  if text ~= nil then
-    self._last_text = text
-  elseif not self._last_text then
+  if not (text or self._last_text) then
     return
+  end
+  if text then
+    self._last_text = text
   else
     text = self._last_text
   end
 
   assert(text)
 
-  local ok, notify = pcall(require, "notify")
-  if not ok then
-    ---@diagnostic disable-next-line: cast-local-type
-    notify = vim.notify
-  end
+  local ok, notif = pcall(require, "notify")
+  local notify = not (ok and notif) and vim.notify or notif
 
   local notification = notify(text, level, {
     icon = self.title_icon,
@@ -73,55 +69,42 @@ DefaultNotifier._update = function(self, text, level, timeout)
     hide_from_history = true,
   })
 
-  if self.sticky then
-    self.notification = notification
-  else
-    self.notification = nil
-  end
+  self.notification = self.sticky and notification or nil
 end
 
----@param time_left number
-DefaultNotifier.tick = function(self, time_left)
-  if self.sticky then
-    self:_update(
-      string.format(
-        " %s  %s left...%s",
-        self.text_icon,
-        util.format_time(time_left),
-        self.timer.paused and " (paused)" or ""
-      ),
-      vim.log.levels.INFO,
-      false
-    )
-  end
-end
-
-DefaultNotifier.start = function(self)
-  ---@type integer|boolean
-  local timeout = false
+---@param time_left integer
+function DefaultNotifier:tick(time_left)
   if not self.sticky then
-    timeout = 2000
+    return
   end
-  self:_update(string.format(" %s  starting...", self.text_icon), vim.log.levels.INFO, timeout)
+  self:_update(
+    (" %s  %s left...%s"):format(self.text_icon, util.format_time(time_left), self.timer.paused and " (paused)" or ""),
+    vim.log.levels.INFO,
+    false
+  )
 end
 
-DefaultNotifier.done = function(self)
-  self:_update(string.format(" %s  timer done!", self.text_icon), vim.log.levels.WARN, 3000)
+function DefaultNotifier:start()
+  self:_update((" %s  starting..."):format(self.text_icon), vim.log.levels.INFO, self.sticky and false or 2000)
 end
 
-DefaultNotifier.stop = function(self)
-  self:_update(string.format(" %s  stopping...", self.text_icon), vim.log.levels.INFO, 1000)
+function DefaultNotifier:done()
+  self:_update((" %s  timer done!"):format(self.text_icon), vim.log.levels.WARN, 3000)
 end
 
-DefaultNotifier.hide = function(self)
+function DefaultNotifier:stop()
+  self:_update((" %s  stopping..."):format(self.text_icon), vim.log.levels.INFO, 1000)
+end
+
+function DefaultNotifier:hide()
   self.sticky = false
   self:_update(nil, vim.log.levels.INFO, 100)
 end
 
-DefaultNotifier.show = function(self)
+function DefaultNotifier:show()
   self.sticky = true
   local time_left = self.timer:time_remaining()
-  if time_left ~= nil and time_left > 0 then
+  if time_left and time_left > 0 then
     self:tick(time_left)
   end
 end
